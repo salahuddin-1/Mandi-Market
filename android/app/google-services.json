@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "876526980375",
+    "project_id": "mandi-market-53455",
+    "storage_bucket": "mandi-market-53455.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:876526980375:android:193fea9ff4a4a043557b52",
+        "android_client_info": {
+          "package_name": "com.accounting.mandimarket"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "876526980375-friam4krtqnadnc1dql4oj9j6l8rmjda.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.accounting.mandimarket",
+            "certificate_hash": "8ee2107ef4d8a750953b739cd36801fb7c25ae70"
+          }
+        },
+        {
+          "client_id": "876526980375-67sm0pg8pr5jrkt5e16vn826vodfd979.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0jrgB_eyt6PQIUXfPhBvgsiYXSTkowYc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "876526980375-67sm0pg8pr5jrkt5e16vn826vodfd979.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
