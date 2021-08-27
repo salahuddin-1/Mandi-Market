@@ -9,7 +9,6 @@ import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/resources/shared_pref.dart';
 import 'package:mandimarket/src/resources/verify_phone_number.dart';
 import 'package:mandimarket/src/ui/home/initial_screen.dart';
-import 'package:mandimarket/src/ui/registration/welcome_screen.dart';
 import 'package:mandimarket/src/widgets/toast.dart';
 
 class RegistrationHandler {
@@ -100,7 +99,7 @@ class RegistrationHandler {
           );
           PushAndRemoveUntil(
             context,
-            pushAndRemoveTo: InititalScreen(),
+            pushAndRemoveTo: InitialScreen(),
           );
         },
       ).catchError(

@@ -36,7 +36,7 @@ class LoginHandler {
                   );
                   Push(
                     context,
-                    pushTo: InititalScreen(),
+                    pushTo: InitialScreen(),
                   );
                   WelcomeCard.welcomeCard(context);
                 } else if (snapshot.docs.isEmpty) {

@@ -7,7 +7,6 @@ import 'package:mandimarket/src/ui/login/login.dart';
 import 'package:mandimarket/src/ui/registration/registration_step_2.dart';
 import 'package:mandimarket/src/ui/registration/welcome_screen.dart';
 
-import '../persisitent_bnb_using_library.dart';
 import 'package:sizer/sizer.dart';
 
 class HomePage extends StatelessWidget {
@@ -19,7 +18,7 @@ class HomePage extends StatelessWidget {
       future: SharedPref.getUserPrefs(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return InititalScreen();
+          return InitialScreen();
         }
 
         return WelcomeScreen();
