@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mandimarket/src/resources/navigation.dart';
+import 'package:mandimarket/src/ui/master/bepari/bepari_table.dart';
 import 'package:sizer/sizer.dart';
 
 class MasterScreen extends StatelessWidget {
@@ -18,7 +20,12 @@ class MasterScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 2.h),
               child: Row(
                 children: [
-                  _leftChild("Bepari"),
+                  _leftChild(
+                    "Bepari",
+                    onTap: () {
+                      onTapBepari(context);
+                    },
+                  ),
                   _rightChild("Customer"),
                 ],
               ),
@@ -59,51 +66,68 @@ class MasterScreen extends StatelessWidget {
     );
   }
 
-  Expanded _rightChild(String title) {
+  onTapBepari(BuildContext context) {
+    Push(
+      context,
+      pushTo: BepariTable(),
+    );
+  }
+
+  Expanded _rightChild(String title, {Function? onTap}) {
     return Expanded(
-      child: Container(
-        margin: EdgeInsets.only(left: 1.5.w, right: 3.w),
-        height: 14.h,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: Colors.yellow[700],
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              offset: Offset(4, 4),
-              blurRadius: 12,
-              spreadRadius: -8,
-            ),
-          ],
-        ),
-        child: Text(
-          title,
-          textScaleFactor: 0.81.sp,
+      child: GestureDetector(
+        onTap: () {
+          onTap!();
+        },
+        child: Container(
+          margin: EdgeInsets.only(left: 1.5.w, right: 3.w),
+          height: 14.h,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Colors.yellow[700],
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                offset: Offset(4, 4),
+                blurRadius: 12,
+                spreadRadius: -8,
+              ),
+            ],
+          ),
+          child: Text(
+            title,
+            textScaleFactor: 0.81.sp,
+          ),
         ),
       ),
     );
   }
 
-  Expanded _leftChild(String title) {
+  Expanded _leftChild(String title, {Function? onTap}) {
     return Expanded(
-      child: Container(
-        margin: EdgeInsets.only(left: 3.w, right: 1.5.w),
-        height: 14.h,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: Colors.yellow[700],
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              offset: Offset(4, 4),
-              blurRadius: 12,
-              spreadRadius: -8,
-            ),
-          ],
-        ),
-        child: Text(
-          title,
-          textScaleFactor: 0.81.sp,
+      child: GestureDetector(
+        onTap: () {
+          onTap!();
+        },
+        child: Container(
+          margin: EdgeInsets.only(left: 3.w, right: 1.5.w),
+          height: 14.h,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Colors.yellow[700],
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                offset: Offset(4, 4),
+                blurRadius: 12,
+                spreadRadius: -8,
+              ),
+            ],
+          ),
+          child: Text(
+            title,
+            textScaleFactor: 0.81.sp,
+          ),
         ),
       ),
     );

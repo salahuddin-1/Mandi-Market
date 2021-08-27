@@ -98,7 +98,7 @@ class _InitialScreenState extends State<InitialScreen> {
         icon: Icons.file_copy,
       ),
       _navBarItem(
-        "Admin",
+        "Administrator",
         icon: Icons.person,
       ),
       _navBarItem(
