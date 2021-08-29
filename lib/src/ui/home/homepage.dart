@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:mandimarket/src/dependency_injection/user_credentials.dart';
 import 'package:mandimarket/src/models/login_model.dart';
 import 'package:mandimarket/src/resources/shared_pref.dart';
 import 'package:mandimarket/src/ui/authenticated_user/welcome_card.dart';
@@ -18,11 +20,19 @@ class HomePage extends StatelessWidget {
       future: SharedPref.getUserPrefs(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
+          injectUserCredentials(snapshot.data!);
           return InitialScreen();
         }
 
         return WelcomeScreen();
       },
+    );
+  }
+
+  void injectUserCredentials(LoginModel loginModel) {
+    userCredentials.saveUserCredentials(
+      ownersPhoneNumber: loginModel.phoneNumber,
+      ownersPassword: loginModel.password,
     );
   }
 }
