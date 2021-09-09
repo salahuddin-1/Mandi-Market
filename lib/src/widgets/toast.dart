@@ -22,4 +22,23 @@ class ShowToast {
       ),
     );
   }
+
+  static errorToast(String msg, BuildContext context, int duration) {
+    return showToast(
+      msg,
+      context: context,
+      animation: StyledToastAnimation.scale,
+      reverseAnimation: StyledToastAnimation.fade,
+      position: StyledToastPosition.center,
+      animDuration: Duration(seconds: 1),
+      duration: Duration(seconds: duration),
+      curve: Curves.elasticOut,
+      reverseCurve: Curves.linear,
+      backgroundColor: Colors.white,
+      textStyle: GoogleFonts.raleway(
+        fontWeight: FontWeight.w500,
+        color: Colors.red,
+      ),
+    );
+  }
 }

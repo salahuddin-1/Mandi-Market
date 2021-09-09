@@ -1,7 +1,7 @@
 import 'package:rxdart/rxdart.dart';
 
 class DebitCreditBloc {
-  final _streamCntrl = BehaviorSubject<String>.seeded("Debit");
+  late BehaviorSubject<String> _streamCntrl;
 
   void updateValue(String value) {
     _streamCntrl.sink.add(value);
@@ -13,5 +13,16 @@ class DebitCreditBloc {
 
   void dispose() {
     _streamCntrl.close();
+  }
+
+  String get value => _streamCntrl.value;
+
+  DebitCreditBloc({required String type}) {
+    String _value = "Debit";
+
+    if (type == "Customer" || type == "Pedi") {
+      _value = "Credit";
+    }
+    _streamCntrl = BehaviorSubject<String>.seeded(_value);
   }
 }

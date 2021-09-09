@@ -1,9 +1,11 @@
 class PartyValidation {
-  static String? name(String val) {
+  static String? name(String val, [String? bepariName]) {
     if (val.isEmpty) {
       return "Party name cannot be empty";
     } else if (val.trim().length > 35) {
       return "Party name too long";
+    } else if (val.toLowerCase().trim() == bepariName) {
+      return "Party name already exists";
     }
     return null;
   }

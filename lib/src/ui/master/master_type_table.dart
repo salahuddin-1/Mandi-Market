@@ -1,35 +1,83 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mandimarket/src/database/bepari_database.dart';
+import 'package:mandimarket/src/blocs/master_list_pagination.dart';
+import 'package:mandimarket/src/database/database_constants.dart';
+import 'package:mandimarket/src/database/master_database.dart';
 import 'package:mandimarket/src/dependency_injection/user_credentials.dart';
-import 'package:mandimarket/src/models/bepari_model.dart';
+import 'package:mandimarket/src/models/master_model.dart';
+import 'package:mandimarket/src/resources/master_handler.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
-import 'package:mandimarket/src/ui/master/bepari/add_bepari.dart';
-import 'package:mandimarket/src/ui/master/bepari/edit_bepari.dart';
+import 'package:mandimarket/src/ui/master/add_master_party.dart';
+import 'package:mandimarket/src/ui/master/edit_types_of_master.dart';
 import 'package:mandimarket/src/widgets/circular_progress.dart';
 import 'package:sizer/sizer.dart';
 
-class BepariTable extends StatelessWidget {
+class MasterTable extends StatefulWidget {
+  final String type;
+
+  MasterTable({Key? key, required this.type}) : super(key: key);
+
+  @override
+  _MasterTableState createState() => _MasterTableState();
+}
+
+class _MasterTableState extends State<MasterTable> {
   final ownersPhoneNumber = userCredentials.ownersPhoneNumber;
+  late final masterHandler = MasterHandler();
+  late MasterPaginationBloc masterPagination;
+
+  ScrollController scrollController = ScrollController();
+
+  @override
+  void initState() {
+    masterPagination = MasterPaginationBloc(type: widget.type);
+
+    masterPagination.getUsers();
+
+    addScrollListener();
+
+    super.initState();
+  }
+
+  void addScrollListener() {
+    scrollController.addListener(
+      () {
+        double maxScroll = scrollController.position.maxScrollExtent;
+        double currentScroll = scrollController.position.pixels;
+
+        if (currentScroll + 1 > maxScroll) {
+          masterPagination.getUsers();
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    masterPagination.dispose();
+    scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appbar(context),
       floatingActionButton: _floatingActionButton(context),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: BepariDatabase.getAllBepari(ownersPhoneNumber),
+      body: StreamBuilder<List<MasterModel>>(
+        stream: masterPagination.streamMasterModel,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(child: circularProgressForButton());
-          }
-
-          if (snapshot.data!.docs.isEmpty) {
+            return circularProgress();
+          } else if (snapshot.data!.isEmpty || snapshot.data == null) {
             return _noData();
-          }
-          if (snapshot.hasData) {
-            List<BepariModel> bepariList = _getBepariModelList(snapshot.data!);
+          } else if (snapshot.hasError) {
+            return _errorWidget();
+          } else if (snapshot.hasData) {
+            //
+
+            final masterList = snapshot.data;
 
             return Center(
               child: Container(
@@ -60,10 +108,11 @@ class BepariTable extends StatelessWidget {
                       child: Container(
                         height: 73.h,
                         child: ListView.builder(
+                          controller: scrollController,
                           scrollDirection: Axis.horizontal,
-                          itemCount: snapshot.data!.docs.length,
+                          itemCount: masterList!.length,
                           itemBuilder: (context, index) {
-                            final bepariModel = bepariList[index];
+                            final masterModel = masterList[index];
 
                             return Container(
                               margin: EdgeInsets.symmetric(horizontal: 0.5.w),
@@ -71,22 +120,26 @@ class BepariTable extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  _editViewButton(context),
+                                  _editViewButton(
+                                    context,
+                                    docId: masterModel.documentId ?? "",
+                                  ),
                                   _subtitle(
-                                    bepariModel.partyName,
+                                    masterModel.partyName,
                                   ),
                                   _divider(),
                                   _subtitle(
-                                    bepariModel.address,
+                                    masterModel.address,
                                   ),
                                   _divider(),
-                                  _subtitle(bepariModel.phoneNumber),
+                                  _subtitle(masterModel.phoneNumber),
                                   _divider(),
                                   _openingBalWithFittedBox(
-                                    bepariModel.openingBalance,
+                                    masterModel.openingBalance,
+                                    masterModel.debitOrCredit,
                                   ),
                                   _divider(),
-                                  _subtitle(bepariModel.remark),
+                                  _subtitle(masterModel.remark),
                                 ],
                               ),
                             );
@@ -100,20 +153,16 @@ class BepariTable extends StatelessWidget {
             );
           }
 
-          return circularProgressForButton();
+          return circularProgress();
         },
       ),
     );
   }
 
-  List<BepariModel> _getBepariModelList(QuerySnapshot snapshot) {
-    final bepariList = snapshot.docs.map(
-      (doc) {
-        BepariModel bepariModel = BepariModel.fromDocument(doc);
-        return bepariModel;
-      },
-    ).toList();
-    return bepariList;
+  Center _errorWidget() {
+    return Center(
+      child: Text("Something went wrong"),
+    );
   }
 
   Widget _noData() {
@@ -122,19 +171,40 @@ class BepariTable extends StatelessWidget {
     );
   }
 
-  Expanded _openingBalWithFittedBox(String openBal) {
+  Expanded _openingBalWithFittedBox(String openBal, String debitOrCredit) {
+    debitOrCredit = debitOrCredit.substring(0, 1);
+
     return Expanded(
       child: Center(
         child: FittedBox(
-          child: Container(
-            alignment: Alignment.center,
-            child: Text(
-              openBal,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+          child: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: openBal,
+                  style: GoogleFonts.raleway(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12.sp,
+                  ),
+                ),
+                TextSpan(text: " "),
+                WidgetSpan(
+                  child: Transform.translate(
+                    offset: const Offset(0.0, -7.0),
+                    child: Text(
+                      debitOrCredit,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 8.sp,
+                        color: debitOrCredit == 'C'
+                            ? Colors.green[700]
+                            : Colors.red,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -194,18 +264,21 @@ class BepariTable extends StatelessWidget {
     );
   }
 
-  GestureDetector _editViewButton(BuildContext context) {
-    return GestureDetector(
+  InkWell _editViewButton(BuildContext context, {required String docId}) {
+    return InkWell(
       onTap: () {
         Push(
           context,
-          pushTo: EditBepari(),
+          pushTo: EditMaster(
+            type: widget.type,
+            docId: docId,
+            masterPaginationBloc: masterPagination,
+          ),
         );
       },
       child: FittedBox(
         child: Container(
           alignment: Alignment.center,
-          // padding: EdgeInsets.only(left: 10),
           width: 25.w,
           // color: Colors.red,
           child: Text(
@@ -241,7 +314,10 @@ class BepariTable extends StatelessWidget {
       onPressed: () {
         Push(
           context,
-          pushTo: AddBepari(),
+          pushTo: AddMaster(
+            type: widget.type,
+            masterPaginationBloc: masterPagination,
+          ),
         );
       },
       child: Icon(Icons.add),
@@ -263,19 +339,17 @@ class BepariTable extends StatelessWidget {
           bottomRight: Radius.circular(10),
         ),
       ),
-      title: TextField(
-        onTap: () {
-          print("Search");
-        },
-        readOnly: true,
-        decoration: InputDecoration(
-          hintText: "Search",
-          suffixIcon: Icon(
+      title: Text(
+        '${widget.type} table',
+      ),
+      actions: [
+        IconButton(
+          onPressed: () {},
+          icon: Icon(
             Icons.search,
-            color: Colors.black,
           ),
         ),
-      ),
+      ],
       centerTitle: true,
     );
   }

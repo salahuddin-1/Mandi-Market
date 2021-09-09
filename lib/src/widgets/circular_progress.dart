@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
+Center circularProgress() {
+  return Center(
+    child: CircularProgressIndicator(
+      color: Colors.black,
+      strokeWidth: 1.5,
+    ),
+  );
+}
+
 Widget circularProgressForButton() {
   return Container(
     height: 5.w,

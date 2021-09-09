@@ -29,6 +29,18 @@ class MyApp extends StatelessWidget {
                 ),
               ),
             ),
+            appBarTheme: AppBarTheme(
+              centerTitle: true,
+              titleTextStyle: GoogleFonts.raleway(
+                color: Colors.black,
+              ),
+              textTheme: TextTheme(
+                headline6: GoogleFonts.raleway(
+                  color: Colors.black,
+                  fontSize: 14.sp,
+                ),
+              ),
+            ),
           ),
           debugShowCheckedModeBanner: false,
           title: "Mandi Market",
