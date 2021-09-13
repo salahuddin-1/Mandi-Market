@@ -7,6 +7,9 @@ import 'package:mandimarket/src/resources/format_date.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:sizer/sizer.dart';
 
+import 'add_a_transaction.dart';
+import 'transaction_table.dart';
+
 class TransactionScreen extends StatefulWidget {
   @override
   _TransactionScreenState createState() => _TransactionScreenState();
@@ -48,80 +51,116 @@ class _TransactionScreenState extends State<TransactionScreen> {
     return Scaffold(
       appBar: _appbar(),
       body: Container(
-        padding: EdgeInsets.only(top: 1.5.h),
-        child: ListView(
-          padding: EdgeInsets.symmetric(vertical: 3.h),
+        padding: EdgeInsets.only(top: 1.5.h, bottom: 2.h),
+        child: Column(
+          // padding: EdgeInsets.symmetric(vertical: 3.h),
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 2.h),
-              child: Row(
-                children: [
-                  _leftChild(
-                    "Saga / Purchase Book",
-                    onTap: () => onTapSagaBook(),
-                  ),
-                  _rightChild(
-                    "Billing entry",
-                    onTap: () {
-                      omTapTransactionType(context, "Customer");
-                    },
-                  ),
-                ],
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 2.h),
+                child: Row(
+                  children: [
+                    _leftChild(
+                      "Saga / Purchase Book",
+                      // onTap: () {
+                      //   Push(
+                      //     context,
+                      //     pushTo: TransactionTable(),
+                      //   );
+                      // },
+                      onTap: () => onTapSagaBook(),
+                    ),
+                    _rightChild(
+                      "Billing entry",
+                      onTap: () {
+                        omTapTransactionType(context, "Customer");
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 2.h),
-              child: Row(
-                children: [
-                  _leftChild(
-                    "Pedi",
-                    onTap: () {
-                      omTapTransactionType(context, "Gawal");
-                    },
-                  ),
-                  _rightChild(
-                    "Payment Bepari",
-                    onTap: () {
-                      omTapTransactionType(context, "Pedi");
-                    },
-                  ),
-                ],
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 2.h),
+                child: Row(
+                  children: [
+                    _leftChild(
+                      "Payment Bepari",
+                      onTap: () {
+                        omTapTransactionType(context, "Gawal");
+                      },
+                    ),
+                    _rightChild(
+                      "Payment Gawaal",
+                      onTap: () {
+                        omTapTransactionType(context, "Pedi");
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 2.h),
-              child: Row(
-                children: [
-                  _leftChild(
-                    "Payment Gawali",
-                    onTap: () {
-                      omTapTransactionType(context, "Other Parties");
-                    },
-                  ),
-                  _rightChild(
-                    "Receipt Customer",
-                    onTap: () {
-                      omTapTransactionType(context, "Gawal Account");
-                    },
-                  ),
-                ],
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 2.h),
+                child: Row(
+                  children: [
+                    _leftChild(
+                      "Receipt Customer",
+                      onTap: () {
+                        omTapTransactionType(context, "Other Parties");
+                      },
+                    ),
+                    _rightChild(
+                      "Pedi",
+                      onTap: () {
+                        omTapTransactionType(context, "Gawal Account");
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 2.h),
-              child: Row(
-                children: [
-                  _leftChild(
-                    "Other Entries",
-                    onTap: () {
-                      omTapTransactionType(context, "Dawan");
-                    },
-                  ),
-                  Expanded(
-                    child: Container(),
-                  ),
-                  // _rightChild("Gawal Account"),
-                ],
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 2.h),
+                child: Row(
+                  children: [
+                    _leftChild(
+                      "Adjustment",
+                      onTap: () {
+                        omTapTransactionType(context, "Dawan");
+                      },
+                    ),
+                    _rightChild(
+                      "Other Parties Entry",
+                      onTap: () {
+                        omTapTransactionType(context, "Pedi");
+                      },
+                    )
+                    // _rightChild("Gawal Account"),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 2.h),
+                child: Row(
+                  children: [
+                    _leftChild(
+                      "Expenses",
+                      onTap: () {
+                        omTapTransactionType(context, "Dawan");
+                      },
+                    ),
+                    Expanded(
+                      child: Text(""),
+                    ),
+                    // _rightChild("Gawal Account"),
+                  ],
+                ),
               ),
             ),
           ],
@@ -160,19 +199,11 @@ class _TransactionScreenState extends State<TransactionScreen> {
           ),
           TextButton(
             onPressed: () async {
-              TransactionDatabase()
-                  .getUsersFromMaster(
-                selectDateBloc.fromDateValue,
-                selectDateBloc.toDateValue,
-              )
-                  .then(
-                (snap) {
-                  print(snap.docs.length);
-                  snap.docs.forEach((doc) {
-                    print(doc['dateHash']);
-                  });
-                },
+              Push(
+                context,
+                pushTo: TransactionTable(),
               );
+              Pop(newContext);
             },
             child: Text("OK"),
           ),
@@ -188,7 +219,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text("To : "),
-        StreamBuilder<DateTime>(
+        StreamBuilder<DateTime?>(
           stream: selectDateBloc.streamToDate,
           builder: (context, snapshot) {
             return Container(
@@ -213,7 +244,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text("From : "),
-        StreamBuilder<DateTime>(
+        StreamBuilder<DateTime?>(
           stream: selectDateBloc.streamFromDate,
           builder: (context, snapshot) {
             return Container(
@@ -235,7 +266,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
 
   Future<void> onTapToDate(
     BuildContext newContext,
-    AsyncSnapshot<DateTime> snapshot,
+    AsyncSnapshot<DateTime?> snapshot,
   ) async {
     var date = await showDate(
       newContext,
@@ -250,7 +281,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
 
   Future<void> onTapFromDate(
     BuildContext newContext,
-    AsyncSnapshot<DateTime> snapshot,
+    AsyncSnapshot<DateTime?> snapshot,
   ) async {
     var date = await showDate(
       newContext,
@@ -296,7 +327,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
             ),
           ],
         ),
-        height: 14.h,
+        // height: 14.h,
         margin: EdgeInsets.only(left: 1.5.w, right: 3.w),
         child: Material(
           color: Colors.yellow[700],
@@ -331,7 +362,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
             ),
           ],
         ),
-        height: 14.h,
+        // height: 14.h,
         margin: EdgeInsets.only(left: 3.w, right: 1.5.w),
         child: Material(
           color: Colors.yellow[700],

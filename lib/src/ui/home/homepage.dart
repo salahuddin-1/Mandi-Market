@@ -20,6 +20,28 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // return Scaffold(
+    //   // appBar: _appbar(),
+    //   body: SizedBox.expand(
+    //     child: DraggableScrollableSheet(
+    //       maxChildSize: 0.4,
+    //       initialChildSize: 0.1,
+    //       minChildSize: 0.05,
+    //       builder: (context, cntrl) => Container(
+    //         color: Colors.yellow[700],
+    //         child: ListView(
+    //           controller: cntrl,
+    //           children: [
+    //             ListTile(
+    //               title: Text("Hello"),
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //     ),
+    //   ),
+    // );
+
     return FutureBuilder<LoginModel>(
       future: SharedPref.getUserPrefs(),
       builder: (context, snapshot) {

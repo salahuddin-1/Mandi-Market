@@ -62,15 +62,6 @@ class MasterModel {
     return map;
   }
 
-  int dateInNumbers() {
-    final dateTime = DateTime.now();
-    final day = dateTime.day;
-    final month = dateTime.month;
-    final year = dateTime.year;
-
-    return day + month + year;
-  }
-
   Map<String, dynamic> toMapUpdateQuery() {
     final Map<String, dynamic> map = Map<String, dynamic>();
 

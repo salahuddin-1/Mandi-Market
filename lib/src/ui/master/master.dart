@@ -11,82 +11,67 @@ class MasterScreen extends StatelessWidget {
     return Scaffold(
       appBar: _appbar(),
       body: Container(
-        padding: EdgeInsets.only(top: 1.5.h),
-        child: ListView(
-          padding: EdgeInsets.symmetric(vertical: 3.h),
+        padding: EdgeInsets.only(top: 3.h, bottom: 15.h),
+        child: Column(
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 2.h),
-              child: Row(
-                children: [
-                  _leftChild(
-                    "Bepari",
-                    onTap: () {
-                      onTapMasterType(context, "Bepari");
-                    },
-                  ),
-                  _rightChild(
-                    "Customer",
-                    onTap: () {
-                      onTapMasterType(context, "Customer");
-                    },
-                  ),
-                ],
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 2.h),
+                child: Row(
+                  children: [
+                    _leftChild(
+                      "Bepari",
+                      onTap: () {
+                        onTapMasterType(context, "Bepari");
+                      },
+                    ),
+                    _rightChild(
+                      "Customer",
+                      onTap: () {
+                        onTapMasterType(context, "Customer");
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 2.h),
-              child: Row(
-                children: [
-                  _leftChild(
-                    "Gawal",
-                    onTap: () {
-                      onTapMasterType(context, "Gawal");
-                    },
-                  ),
-                  _rightChild(
-                    "Pedi",
-                    onTap: () {
-                      onTapMasterType(context, "Pedi");
-                    },
-                  ),
-                ],
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 2.h),
+                child: Row(
+                  children: [
+                    _leftChild(
+                      "Gawaal",
+                      onTap: () {
+                        onTapMasterType(context, "Gawal");
+                      },
+                    ),
+                    _rightChild(
+                      "Dawan",
+                      onTap: () {
+                        onTapMasterType(context, "Dawan");
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 2.h),
-              child: Row(
-                children: [
-                  _leftChild(
-                    "Other Parties",
-                    onTap: () {
-                      onTapMasterType(context, "Other Parties");
-                    },
-                  ),
-                  _rightChild(
-                    "Gawal Account",
-                    onTap: () {
-                      onTapMasterType(context, "Gawal Account");
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 2.h),
-              child: Row(
-                children: [
-                  _leftChild(
-                    "Dawan",
-                    onTap: () {
-                      onTapMasterType(context, "Dawan");
-                    },
-                  ),
-                  Expanded(
-                    child: Container(),
-                  ),
-                  // _rightChild("Gawal Account"),
-                ],
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 2.h),
+                child: Row(
+                  children: [
+                    _leftChild(
+                      "Other Parties",
+                      onTap: () {
+                        onTapMasterType(context, "Other Parties");
+                      },
+                    ),
+                    Expanded(
+                      child: Text(""),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -116,7 +101,7 @@ class MasterScreen extends StatelessWidget {
             ),
           ],
         ),
-        height: 14.h,
+        // height: 14.h,
         margin: EdgeInsets.only(left: 1.5.w, right: 3.w),
         child: Material(
           color: Colors.yellow[700],
@@ -151,7 +136,7 @@ class MasterScreen extends StatelessWidget {
             ),
           ],
         ),
-        height: 14.h,
+        // height: 14.h,
         margin: EdgeInsets.only(left: 3.w, right: 1.5.w),
         child: Material(
           color: Colors.yellow[700],
