@@ -41,4 +41,12 @@ class ShowToast {
       ),
     );
   }
+
+  static successToast(BuildContext context) {
+    return ShowToast.toast(
+      "Success",
+      context,
+      3,
+    );
+  }
 }

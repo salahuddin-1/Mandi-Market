@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mandimarket/src/blocs/show_circular_progress_bloc.dart';
 import 'package:mandimarket/src/blocs/show_hide_password._bloc.dart';
+import 'package:mandimarket/src/constants/colors.dart';
 import 'package:mandimarket/src/resources/login_handler.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/validation/login_validation.dart';
@@ -119,7 +120,7 @@ class _LoginState extends State<Login> {
               'Register',
               style: GoogleFonts.raleway(
                 fontWeight: FontWeight.bold,
-                color: Colors.yellow[700],
+                color: YELLOW700,
               ),
             ),
           ),
@@ -136,7 +137,7 @@ class _LoginState extends State<Login> {
           "Forgot password ?",
           style: GoogleFonts.raleway(
             fontWeight: FontWeight.bold,
-            color: Colors.yellow[700],
+            color: YELLOW700,
           ),
         ),
         onPressed: () {
@@ -156,7 +157,7 @@ class _LoginState extends State<Login> {
           "Login",
           style: TextStyle(
             fontSize: 25.sp,
-            color: Colors.black,
+            color: BLACK,
             fontWeight: FontWeight.w300,
           ),
         ),

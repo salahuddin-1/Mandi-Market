@@ -1,9 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mandimarket/src/blocs/master_list_pagination.dart';
-import 'package:mandimarket/src/database/database_constants.dart';
-import 'package:mandimarket/src/database/master_database.dart';
+import 'package:mandimarket/src/constants/colors.dart';
 import 'package:mandimarket/src/dependency_injection/user_credentials.dart';
 import 'package:mandimarket/src/models/master_model.dart';
 import 'package:mandimarket/src/resources/master_handler.dart';
@@ -68,9 +66,7 @@ class _MasterTableState extends State<MasterTable> {
       body: StreamBuilder<List<MasterModel>>(
         stream: masterPagination.streamMasterModel,
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return circularProgress();
-          } else if (snapshot.data!.isEmpty || snapshot.data == null) {
+          if (snapshot.data == null) {
             return _noData();
           } else if (snapshot.hasError) {
             return _errorWidget();
@@ -183,7 +179,7 @@ class _MasterTableState extends State<MasterTable> {
                 TextSpan(
                   text: openBal,
                   style: GoogleFonts.raleway(
-                    color: Colors.black,
+                    color: BLACK,
                     fontWeight: FontWeight.w600,
                     fontSize: 12.sp,
                   ),
@@ -223,7 +219,7 @@ class _MasterTableState extends State<MasterTable> {
 
   BoxDecoration _boxDecorationForTitle() {
     return BoxDecoration(
-      color: Colors.yellow[700],
+      color: YELLOW700,
       borderRadius: BorderRadius.only(
         topRight: Radius.circular(20),
         bottomRight: Radius.circular(20),

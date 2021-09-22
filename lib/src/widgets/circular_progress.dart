@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:mandimarket/src/constants/colors.dart';
 import 'package:sizer/sizer.dart';
 
 Center circularProgress() {
   return Center(
     child: CircularProgressIndicator(
-      color: Colors.black,
+      color: BLACK,
       strokeWidth: 1.5,
     ),
   );
@@ -15,7 +16,7 @@ Widget circularProgressForButton() {
     height: 5.w,
     width: 5.w,
     child: CircularProgressIndicator(
-      color: Colors.black,
+      color: BLACK,
       strokeWidth: 1.5,
     ),
   );
@@ -28,7 +29,7 @@ Widget circularProgressForWholeScreen({
   return Container(
     height: 100.h,
     width: 100.w,
-    color: Colors.black.withOpacity(0.5),
+    color: BLACK.withOpacity(0.5),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mandimarket/src/blocs/show_circular_progress_bloc.dart';
 import 'package:mandimarket/src/blocs/show_hide_password._bloc.dart';
+import 'package:mandimarket/src/constants/colors.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/resources/registration_handler.dart';
-import 'package:mandimarket/src/resources/verify_phone_number.dart';
 import 'package:mandimarket/src/ui/login/login.dart';
-import 'package:mandimarket/src/ui/registration/registration_step_2.dart';
 import 'package:mandimarket/src/validation/register_validation.dart';
 import 'package:mandimarket/src/widgets/app_bar.dart';
 import 'package:mandimarket/src/widgets/circular_progress.dart';
@@ -120,7 +119,7 @@ class _Step1State extends State<Step1> {
       "Register",
       style: TextStyle(
         fontSize: 25.sp,
-        color: Colors.black,
+        color: BLACK,
         fontWeight: FontWeight.w300,
       ),
     );
@@ -220,7 +219,7 @@ class _Step1State extends State<Step1> {
               'Login',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Colors.yellow[700],
+                color: YELLOW700,
               ),
             ),
           ),

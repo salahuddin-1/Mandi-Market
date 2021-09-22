@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mandimarket/src/constants/colors.dart';
 import 'package:mandimarket/src/constants/images.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
-import 'package:mandimarket/src/resources/shared_pref.dart';
 import 'package:mandimarket/src/ui/login/login.dart';
 import 'package:sizer/sizer.dart';
 
@@ -72,13 +72,13 @@ class WelcomeScreen extends StatelessWidget {
         child: Text(
           "Get started",
           style: TextStyle(
-            color: Colors.black,
+            color: BLACK,
             fontSize: 11.sp,
           ),
         ),
       ),
       decoration: BoxDecoration(
-        color: Colors.yellow[700],
+        color: YELLOW700,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(

@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:mandimarket/src/blocs/show_circular_progress_bloc.dart';
 import 'package:mandimarket/src/database/register_login_db.dart';
+import 'package:mandimarket/src/dependency_injection/user_credentials.dart';
+import 'package:mandimarket/src/models/register_model.dart';
+import 'package:mandimarket/src/resources/errors.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/resources/shared_pref.dart';
 import 'package:mandimarket/src/ui/authenticated_user/welcome_card.dart';
@@ -17,47 +20,70 @@ class LoginHandler {
   ) async {
     if (key.currentState!.validate()) {
       key.currentState!.save();
+
       showCircularProgressBloc.showCircularProgress(true);
 
-      await RegisterLoginDb.getUserByPhoneNumber(phoneNumber).then(
-        (doc) async {
-          if (doc.exists) {
-            await RegisterLoginDb.getUserByPassword(password).then(
-              (snapshot) {
-                if (snapshot.docs.isNotEmpty) {
-                  SharedPref.storeUsersLoginInfo(
-                    phoneNumber,
-                    password,
-                  );
-                  ShowToast.toast(
-                    "Successfully logged in",
-                    context,
-                    3,
-                  );
-                  Push(
-                    context,
-                    pushTo: InitialScreen(),
-                  );
-                  WelcomeCard.welcomeCard(context);
-                } else if (snapshot.docs.isEmpty) {
-                  ShowToast.toast(
-                    "Invalid Password",
-                    context,
-                    3,
-                  );
-                }
-              },
+      try {
+        var doc = await RegisterLoginDb.getUserByPhoneNumber(phoneNumber);
+
+        if (doc.exists) {
+          var qSnap = await RegisterLoginDb.getUserByPassword(
+            password,
+            phoneNumber,
+          );
+
+          if (qSnap.docs.isNotEmpty) {
+            final userModel = RegisterModel.fromDoc(qSnap.docs.first);
+
+            // print(qSnap.docs.first['phoneNumber']);
+            SharedPref.storeUsersLoginInfo(
+              phoneNumber,
+              password,
             );
-          } else {
+
+            userCredentials.saveUserCredentials(
+              ownersPhoneNumber: phoneNumber,
+              ownersPassword: password,
+            );
+
             ShowToast.toast(
-              "User does not exist",
+              "Successfully logged in",
+              context,
+              3,
+            );
+
+            Push(
+              context,
+              pushTo: InitialScreen(),
+            );
+
+            WelcomeCard.welcomeCard(
+              context,
+              userModel,
+            );
+          } else if (qSnap.docs.isEmpty) {
+            ShowToast.toast(
+              "Invalid Password",
               context,
               3,
             );
           }
-          showCircularProgressBloc.showCircularProgress(false);
-        },
-      );
+        } else {
+          ShowToast.toast(
+            "User does not exist",
+            context,
+            3,
+          );
+        }
+
+        showCircularProgressBloc.showCircularProgress(false);
+      } catch (e) {
+        ErrorCustom.catchError(
+          context,
+          e.toString(),
+        );
+        showCircularProgressBloc.showCircularProgress(false);
+      }
     }
   }
 }

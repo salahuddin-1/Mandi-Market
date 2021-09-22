@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mandimarket/src/blocs/handle_gallery_camera_bloc.dart';
 import 'package:mandimarket/src/blocs/select_logo_bloc.dart';
 import 'package:mandimarket/src/blocs/show_circular_progress_bloc.dart';
+import 'package:mandimarket/src/constants/colors.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/resources/registration_handler.dart';
 import 'package:mandimarket/src/ui/registration/selectCompanyLogo.dart';
@@ -182,7 +183,7 @@ class _Step2State extends State<Step2> {
       "Company details",
       style: GoogleFonts.poiretOne(
         fontSize: 25.sp,
-        color: Colors.black,
+        color: BLACK,
         fontWeight: FontWeight.bold,
         letterSpacing: 2,
       ),
@@ -291,7 +292,7 @@ class _Step2State extends State<Step2> {
   _dialogTextStyle() {
     return GoogleFonts.raleway(
       fontWeight: FontWeight.w500,
-      color: Colors.black,
+      color: BLACK,
       fontSize: 12.sp,
     );
   }
@@ -300,7 +301,7 @@ class _Step2State extends State<Step2> {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.yellow[700],
+        backgroundColor: YELLOW700,
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

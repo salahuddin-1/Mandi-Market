@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mandimarket/src/constants/colors.dart';
+import 'package:mandimarket/src/ui/Master1/master.dart';
 import 'package:mandimarket/src/ui/admin/admin.dart';
-import 'package:mandimarket/src/ui/master/master.dart';
 import 'package:mandimarket/src/ui/report/report.dart';
 import 'package:mandimarket/src/ui/transaction/transaction.dart';
 import 'package:mandimarket/src/ui/utilities/utllities.dart';
@@ -35,7 +36,7 @@ class _InitialScreenState extends State<InitialScreen> {
       screens: _buildScreens(),
       items: _navBarsItems(),
       confineInSafeArea: true,
-      backgroundColor: Colors.white10, // Default is Colors.white.
+      backgroundColor: Colors.white, // Default is Colors.white.
       handleAndroidBackButtonPress: true, // Default is true.
       resizeToAvoidBottomInset:
           true, // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
@@ -78,7 +79,7 @@ class _InitialScreenState extends State<InitialScreen> {
     return PersistentBottomNavBarItem(
       icon: Icon(icon),
       title: (title),
-      activeColorPrimary: Colors.black,
+      activeColorPrimary: BLACK,
       inactiveColorPrimary: CupertinoColors.systemGrey,
     );
   }

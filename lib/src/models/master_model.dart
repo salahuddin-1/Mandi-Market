@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mandimarket/src/constants/calculate_date_hash.dart';
-import 'package:mandimarket/src/resources/format_date.dart';
 
 class MasterModel {
   String partyName;

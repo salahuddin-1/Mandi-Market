@@ -38,7 +38,13 @@ class RegisterLoginDb {
     return await Database.usersRef.doc(phoneNumber).get();
   }
 
-  static Future<QuerySnapshot> getUserByPassword(String password) async {
-    return await Database.usersRef.where("password", isEqualTo: password).get();
+  static Future<QuerySnapshot> getUserByPassword(
+    String password,
+    String phoneNumber,
+  ) async {
+    return await Database.usersRef
+        .where("password", isEqualTo: password)
+        .where("phoneNumber", isEqualTo: phoneNumber)
+        .get();
   }
 }

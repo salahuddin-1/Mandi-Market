@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mandimarket/src/constants/colors.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/ui/master/master_type_table.dart';
 import 'package:sizer/sizer.dart';
@@ -104,7 +105,7 @@ class MasterScreen extends StatelessWidget {
         // height: 14.h,
         margin: EdgeInsets.only(left: 1.5.w, right: 3.w),
         child: Material(
-          color: Colors.yellow[700],
+          color: YELLOW700,
           borderRadius: BorderRadius.circular(10),
           child: InkWell(
             onTap: () {
@@ -139,7 +140,7 @@ class MasterScreen extends StatelessWidget {
         // height: 14.h,
         margin: EdgeInsets.only(left: 3.w, right: 1.5.w),
         child: Material(
-          color: Colors.yellow[700],
+          color: YELLOW700,
           borderRadius: BorderRadius.circular(10),
           child: InkWell(
             onTap: () {

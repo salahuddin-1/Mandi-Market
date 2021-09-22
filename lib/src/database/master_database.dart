@@ -93,4 +93,17 @@ class MasterDatabase {
         .doc(docId)
         .delete();
   }
+
+  static Future<void> insertEntry({
+    required String phoneNumber,
+    required String type,
+    required String documentId,
+    required Map<String, dynamic> map,
+  }) async {
+    return await Database.mastersRef
+        .doc(phoneNumber)
+        .collection(type)
+        .doc(documentId)
+        .set(map);
+  }
 }

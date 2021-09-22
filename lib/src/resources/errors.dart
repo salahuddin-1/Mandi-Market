@@ -1,3 +1,6 @@
+import 'package:flutter/cupertino.dart';
+import 'package:mandimarket/src/widgets/toast.dart';
+
 class ErrorCustom {
   static String error(errorCode) {
     switch (errorCode) {
@@ -33,5 +36,13 @@ class ErrorCustom {
       default:
         return "An unknown error occured. Try again later.";
     }
+  }
+
+  static void catchError(BuildContext context, String e) {
+    ShowToast.toast(
+      ErrorCustom.error(e),
+      context,
+      3,
+    );
   }
 }

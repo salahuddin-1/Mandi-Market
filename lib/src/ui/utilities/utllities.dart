@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/resources/shared_pref.dart';
-import 'package:mandimarket/src/ui/authenticated_user/welcome_card.dart';
 import 'package:mandimarket/src/ui/login/login.dart';
 
 class UtilitiesScreen extends StatelessWidget {
@@ -17,7 +16,7 @@ class UtilitiesScreen extends StatelessWidget {
             TextButton(
               child: Text('Welcome'),
               onPressed: () {
-                WelcomeCard.welcomeCard(context);
+                // WelcomeCard.welcomeCard(context,);
               },
             ),
             TextButton(

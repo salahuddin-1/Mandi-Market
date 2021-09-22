@@ -1,28 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:mandimarket/src/blocs/saga_book_bloc.dart';
+import 'package:mandimarket/src/blocs/Transaction_BLOC/purchase_book_bloc.dart';
+import 'package:mandimarket/src/blocs/Transaction_BLOC/purchase_book_get_user_bloc.dart';
+import 'package:mandimarket/src/blocs/Transaction_BLOC/stream_table.dart';
 import 'package:mandimarket/src/blocs/select_date_bloc.dart';
 import 'package:mandimarket/src/blocs/show_circular_progress_bloc.dart';
+import 'package:mandimarket/src/database/SQFLite/Transaction/sql_resources_purchase_book.dart';
 import 'package:mandimarket/src/dependency_injection/user_credentials.dart';
+import 'package:mandimarket/src/models/purchase_book_model.dart';
+import 'package:mandimarket/src/resources/Transaction/handle_purchase_book..dart';
+import 'package:mandimarket/src/resources/document_id.dart';
 import 'package:mandimarket/src/resources/format_date.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/resources/saga_book_calculations.dart';
-import 'package:mandimarket/src/ui/transaction/users_list.dart';
+import 'package:mandimarket/src/ui/transaction/purchase_book/party_list_from_master.dart';
 import 'package:mandimarket/src/validation/party_validation.dart';
 import 'package:mandimarket/src/validation/transaction_validation.dart';
 import 'package:mandimarket/src/widgets/select_date.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 
-class AddTransaction extends StatefulWidget {
+class AddEntryInPurchasebook extends StatefulWidget {
+  final SagaBookBloc sagaBookBloc;
+
+  AddEntryInPurchasebook({
+    required this.sagaBookBloc,
+  });
   @override
-  _AddTransactionState createState() => _AddTransactionState();
+  _AddEntryInPurchasebookState createState() => _AddEntryInPurchasebookState();
 }
 
-class _AddTransactionState extends State<AddTransaction> {
+class _AddEntryInPurchasebookState extends State<AddEntryInPurchasebook> {
   final ownersPhoneNumber = userCredentials.ownersPhoneNumber;
   late final ShowCircularProgressBloc _showCircularProgressBloc;
   late final SelectDateBloc selectDateBloc;
-  final sagaBookBloc = new SagaBookBloc();
+  late final PurchaseBookGetUserBLOC _purchaseBookUserBLOC;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -44,6 +55,7 @@ class _AddTransactionState extends State<AddTransaction> {
   void initState() {
     _showCircularProgressBloc = ShowCircularProgressBloc();
     selectDateBloc = new SelectDateBloc();
+    _purchaseBookUserBLOC = PurchaseBookGetUserBLOC();
 
     _dateController = new TextEditingController(
       text: formatDate(
@@ -55,14 +67,37 @@ class _AddTransactionState extends State<AddTransaction> {
     _customerNameController = new TextEditingController();
     _pediNameController = new TextEditingController();
     _dawanNameController = new TextEditingController();
-    _unitController = new TextEditingController(text: '0');
-    _rateController = new TextEditingController(text: '0');
-    _kacchiRakmController = new TextEditingController(text: '0');
+    _unitController = new TextEditingController();
+    _rateController = new TextEditingController();
+    _kacchiRakmController = new TextEditingController();
     _dalaliController = new TextEditingController(text: '0');
-    _discountController = new TextEditingController(text: '0');
-    _pakkiRakmController = new TextEditingController(text: '0');
+    _discountController = new TextEditingController();
+    _pakkiRakmController = new TextEditingController();
+
+    setTextfieldsValues();
 
     super.initState();
+  }
+
+  setTextfieldsValues() {
+    _purchaseBookUserBLOC.bepariCntrl.listen(
+      (value) {
+        _bepariNameController.text = value;
+        _pediNameController.text = value;
+      },
+    );
+
+    _purchaseBookUserBLOC.customerStreamCntrl.listen(
+      (value) {
+        _customerNameController.text = value;
+      },
+    );
+
+    _purchaseBookUserBLOC.dawanStreamCntrl.listen(
+      (value) {
+        _dawanNameController.text = value;
+      },
+    );
   }
 
   @override
@@ -81,6 +116,8 @@ class _AddTransactionState extends State<AddTransaction> {
     _dalaliController.dispose();
     _discountController.dispose();
     _pakkiRakmController.dispose();
+
+    _purchaseBookUserBLOC.dispose();
 
     super.dispose();
   }
@@ -113,138 +150,9 @@ class _AddTransactionState extends State<AddTransaction> {
               ),
             ),
           ),
-          _draggableScrollableSheet(),
+          // _draggableScrollableSheet(),
         ],
       ),
-    );
-  }
-
-  DraggableScrollableSheet _draggableScrollableSheet() {
-    return DraggableScrollableSheet(
-      maxChildSize: 0.3,
-      // initialChildSize: 0.3,
-      initialChildSize: 0.05,
-      minChildSize: 0.05,
-      builder: (context, cntrl) => Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-          color: Colors.yellow[700],
-        ),
-        child: ListView(
-          controller: cntrl,
-          children: [
-            SizedBox(height: 1.2.h),
-            Center(
-              child: Container(
-                height: 0.8.h,
-                width: 18.w,
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 7.w,
-                vertical: 4.h,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        "No. of Units :  ",
-                        style: TextStyle(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      StreamBuilder<int>(
-                        stream: sagaBookBloc.noOfUnits,
-                        builder: (context, snapshot) {
-                          return Flexible(
-                            child: FittedBox(
-                              child: Text(
-                                "${snapshot.data}",
-                                style: TextStyle(
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 5.sp),
-                  Row(
-                    children: [
-                      Text(
-                        "Gross Amount :  ",
-                        style: TextStyle(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      StreamBuilder<double>(
-                        stream: sagaBookBloc.grossAmount,
-                        builder: (context, snapshot) {
-                          return Flexible(
-                            child: FittedBox(
-                              child: Text(
-                                "${snapshot.data}",
-                                style: TextStyle(
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  AppBar _appbar() {
-    return AppBar(
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios_sharp),
-        onPressed: () {
-          Pop(context);
-        },
-      ),
-      title: Text("Add Purchase Entry"),
-      centerTitle: false,
-      actions: [
-        IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.check,
-            color: Colors.transparent,
-          ),
-        ),
-        IconButton(
-          onPressed: () {
-            showSheet();
-          },
-          icon: Icon(Icons.check),
-        ),
-      ],
     );
   }
 
@@ -263,23 +171,22 @@ class _AddTransactionState extends State<AddTransaction> {
         ),
       );
 
-  Container _bepariNameTextField() {
-    return Container(
-      child: TextFormField(
-        controller: _bepariNameController,
-        onTap: () {
-          Push(
-            context,
-            pushTo: UsersList(
-              type: 'Bepari',
-            ),
-          );
-        },
-        readOnly: true,
-        validator: (val) => TransactionValidation.bepariName(val!),
-        decoration: InputDecoration(
-          labelText: "Bepari name",
-        ),
+  Widget _bepariNameTextField() {
+    return TextFormField(
+      controller: _bepariNameController,
+      onTap: () {
+        Push(
+          context,
+          pushTo: PartyListFromMaster(
+            type: 'Bepari',
+            purchaseBookGetUserBLOC: _purchaseBookUserBLOC,
+          ),
+        );
+      },
+      readOnly: true,
+      validator: (val) => TransactionValidation.bepariName(val!),
+      decoration: InputDecoration(
+        labelText: "Bepari name",
       ),
     );
   }
@@ -291,8 +198,9 @@ class _AddTransactionState extends State<AddTransaction> {
         onTap: () {
           Push(
             context,
-            pushTo: UsersList(
+            pushTo: PartyListFromMaster(
               type: 'Customer',
+              purchaseBookGetUserBLOC: _purchaseBookUserBLOC,
             ),
           );
         },
@@ -309,15 +217,6 @@ class _AddTransactionState extends State<AddTransaction> {
     return Container(
       child: TextFormField(
         controller: _pediNameController,
-        onTap: () {
-          Push(
-            context,
-            pushTo: UsersList(
-              type: 'Pedi',
-            ),
-          );
-        },
-        readOnly: true,
         decoration: InputDecoration(
           labelText: "Pedi name",
         ),
@@ -332,8 +231,9 @@ class _AddTransactionState extends State<AddTransaction> {
         onTap: () {
           Push(
             context,
-            pushTo: UsersList(
+            pushTo: PartyListFromMaster(
               type: 'Dawan',
+              purchaseBookGetUserBLOC: _purchaseBookUserBLOC,
             ),
           );
         },
@@ -393,12 +293,6 @@ class _AddTransactionState extends State<AddTransaction> {
               labelText: "Unit",
             ),
             onChanged: (val) {
-              if (val.isNotEmpty) {
-                sagaBookBloc.updateNoOfUnits(
-                  int.parse(val),
-                );
-              }
-
               setKacchiRakam();
               setDiscount();
               setPakkiRakam();
@@ -464,31 +358,41 @@ class _AddTransactionState extends State<AddTransaction> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
-          child: TextFormField(
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.grey,
-            ),
-            controller: _kacchiRakmController,
-            keyboardType: TextInputType.phone,
-            readOnly: true,
-            decoration: InputDecoration(
-              labelText: "Kacchi rakam",
+          child: Container(
+            color: Colors.grey[100],
+            child: TextFormField(
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+              controller: _kacchiRakmController,
+              keyboardType: TextInputType.phone,
+              readOnly: true,
+              decoration: InputDecoration(
+                labelText: "Kacchi rakam",
+                labelStyle: TextStyle(
+                  fontWeight: FontWeight.w100,
+                ),
+              ),
             ),
           ),
         ),
         SizedBox(width: 5.w),
         Expanded(
-            child: TextFormField(
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.grey,
-          ),
-          controller: _pakkiRakmController,
-          keyboardType: TextInputType.phone,
-          readOnly: true,
-          decoration: InputDecoration(
-            labelText: "Pakki rakam",
+            child: Container(
+          color: Colors.grey[100],
+          child: TextFormField(
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+            controller: _pakkiRakmController,
+            keyboardType: TextInputType.phone,
+            readOnly: true,
+            decoration: InputDecoration(
+              labelText: "Pakki rakam",
+              labelStyle: TextStyle(
+                fontWeight: FontWeight.w100,
+              ),
+            ),
           ),
         ))
       ],
@@ -530,10 +434,6 @@ class _AddTransactionState extends State<AddTransaction> {
           .toString();
 
       _pakkiRakmController.text = pakkiRakam;
-
-      sagaBookBloc.updateGrossAmount(
-        double.parse(pakkiRakam),
-      );
     }
   }
 
@@ -547,6 +447,78 @@ class _AddTransactionState extends State<AddTransaction> {
           )
           .toString();
       _discountController.text = discount;
+    }
+  }
+
+  AppBar _appbar() {
+    return AppBar(
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back_ios_sharp),
+        onPressed: () {
+          Pop(context);
+        },
+      ),
+      title: Text("Add Purchase Entry"),
+      centerTitle: false,
+      actions: [
+        IconButton(
+          onPressed: () {
+            PurchaseBookSQLResources().clearDb();
+          },
+          icon: Icon(
+            Icons.deck,
+          ),
+        ),
+        IconButton(
+          onPressed: () {
+            PurchaseBookSQLResources().getEntries();
+          },
+          icon: Icon(
+            Icons.search,
+          ),
+        ),
+        IconButton(
+          onPressed: _submit,
+          icon: Icon(Icons.check),
+        ),
+      ],
+    );
+  }
+
+  updateValues() {
+    widget.sagaBookBloc.updateNoOfUnits(
+      int.parse(_unitController.text.trim()),
+    );
+
+    widget.sagaBookBloc.updateGrossAmount(
+      double.parse(_pakkiRakmController.text.trim()),
+    );
+  }
+
+  _submit() {
+    if (_formKey.currentState!.validate()) {
+      updateValues();
+      final purchaseBookModel = new PurchaseBookModel(
+        bepariName: _bepariNameController.text,
+        customerName: _customerNameController.text,
+        pediName: _pediNameController.text.trim(),
+        dawanName: _dawanNameController.text,
+        unit: _unitController.text.trim(),
+        rate: _rateController.text.trim(),
+        dalali: _dalaliController.text.trim(),
+        discount: _discountController.text.trim(),
+        kacchiRakam: _kacchiRakmController.text.trim(),
+        pakkiRakam: _pakkiRakmController.text.trim(),
+        documentId: getDocumentId,
+        selectedTimestamp: selectDateBloc.fromDateValue!.toIso8601String(),
+        timestamp: DateTime.now().toIso8601String(),
+      );
+
+      // Set Data
+      HandlePurchaseBook(context).addEntryInPurchaseBook(
+        purchaseBookModel,
+      );
+      // Pop(context);
     }
   }
 }

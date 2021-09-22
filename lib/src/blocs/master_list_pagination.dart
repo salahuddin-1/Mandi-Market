@@ -5,31 +5,32 @@ import 'package:mandimarket/src/models/master_model.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MasterPaginationBloc {
-  String? type;
+  String? _type;
   final _ownersPhoneNumber = userCredentials.ownersPhoneNumber;
   final _masterModelCntrl = BehaviorSubject<List<MasterModel>>();
 
-  DocumentSnapshot? lastDoc;
-  List<MasterModel> usersList = [];
+  DocumentSnapshot? _lastDoc;
+  List<MasterModel> _usersList = [];
   List<MasterModel> _cacheList = [];
 
-  addAnItemToCacheList(MasterModel masterModel) {
+  void addAnItemToCacheList(MasterModel masterModel) {
     _cacheList.add(masterModel);
 
-    usersList.insert(0, masterModel);
-    _masterModelCntrl.sink.add(usersList);
+    _usersList.insert(0, masterModel);
+    _masterModelCntrl.sink.add(_usersList);
   }
 
   bool _gettingMoreUsers = false;
   bool _moreUsersAvailable = true;
-  getUsers({int docLimit = 3}) async {
+
+  void getUsers({int docLimit = 3}) async {
     if (!_moreUsersAvailable) return;
     if (_gettingMoreUsers) return;
     _gettingMoreUsers = true;
-    if (lastDoc == null) {
+    if (_lastDoc == null) {
       final snap = await Database.mastersRef
           .doc(_ownersPhoneNumber)
-          .collection(type!)
+          .collection(_type!)
           .orderBy('comparingName')
           .limit(docLimit)
           .get();
@@ -49,20 +50,20 @@ class MasterPaginationBloc {
 
           if (!addUser) continue;
 
-          this.usersList.add(masterModel);
+          this._usersList.add(masterModel);
         }
-        lastDoc = snap.docs.last;
-        _masterModelCntrl.sink.add(this.usersList);
+        _lastDoc = snap.docs.last;
+        _masterModelCntrl.sink.add(this._usersList);
       }
       //
 
     } else {
       final snap = await Database.mastersRef
           .doc(_ownersPhoneNumber)
-          .collection(type!)
+          .collection(_type!)
           .orderBy('comparingName')
           .limit(docLimit)
-          .startAfterDocument(lastDoc!)
+          .startAfterDocument(_lastDoc!)
           .get();
 
       if (snap.docs.length < docLimit) _moreUsersAvailable = false;
@@ -80,16 +81,16 @@ class MasterPaginationBloc {
 
           if (!addUser) continue;
 
-          this.usersList.add(masterModel);
+          this._usersList.add(masterModel);
         }
-        lastDoc = snap.docs.last;
-        _masterModelCntrl.sink.add(this.usersList);
+        _lastDoc = snap.docs.last;
+        _masterModelCntrl.sink.add(this._usersList);
       }
     }
     _gettingMoreUsers = false;
   }
 
-  editAUser(MasterModel masterModel) {
+  void editAUser(MasterModel masterModel) {
     var newList = _masterModelCntrl.value;
 
     for (int i = 0; i < newList.length; i++) {
@@ -102,7 +103,7 @@ class MasterPaginationBloc {
     _masterModelCntrl.sink.add(newList);
   }
 
-  deleteAUserFromList(String docId) {
+  void deleteAUserFromList(String docId) {
     var newList = _masterModelCntrl.value;
 
     for (int i = 0; i < newList.length; i++) {
@@ -122,6 +123,6 @@ class MasterPaginationBloc {
   }
 
   MasterPaginationBloc({required String type}) {
-    this.type = type.toLowerCase();
+    this._type = type.toLowerCase();
   }
 }

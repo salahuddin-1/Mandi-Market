@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mandimarket/src/blocs/select_logo_bloc.dart';
+import 'package:mandimarket/src/constants/colors.dart';
 import 'package:mandimarket/src/constants/images.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:sizer/sizer.dart';
@@ -66,7 +67,7 @@ class _SelectCompanyLogoState extends State<SelectCompanyLogo> {
         ),
       ),
       decoration: BoxDecoration(
-        color: Colors.yellow[700],
+        color: YELLOW700,
         borderRadius: BorderRadius.circular(10),
       ),
     );
@@ -123,7 +124,7 @@ class _SelectCompanyLogoState extends State<SelectCompanyLogo> {
         widget.logoBloc.selectFromGallery();
       },
       minWidth: 50.w,
-      color: Colors.yellow[700],
+      color: YELLOW700,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
@@ -131,7 +132,7 @@ class _SelectCompanyLogoState extends State<SelectCompanyLogo> {
         "Choose from gallery",
         style: GoogleFonts.raleway(
           fontWeight: FontWeight.bold,
-          color: Colors.black,
+          color: BLACK,
           // letterSpacing: 1,
           fontSize: 10.sp,
         ),
@@ -158,7 +159,7 @@ class _SelectCompanyLogoState extends State<SelectCompanyLogo> {
           },
           icon: Icon(
             Icons.check,
-            color: Colors.yellow[700],
+            color: YELLOW700,
           ),
         ),
       ],

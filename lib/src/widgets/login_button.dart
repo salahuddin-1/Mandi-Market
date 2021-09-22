@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mandimarket/src/constants/colors.dart';
 import 'package:sizer/sizer.dart';
 
 class LoginButton extends StatelessWidget {
@@ -34,7 +35,7 @@ class LoginButton extends StatelessWidget {
                         "$title ",
                         style: GoogleFonts.raleway(
                           fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                          color: BLACK,
                           fontSize: 12.sp,
                         ),
                       ),
@@ -44,7 +45,7 @@ class LoginButton extends StatelessWidget {
           ),
         ),
         decoration: BoxDecoration(
-          color: Colors.yellow[700],
+          color: YELLOW700,
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(

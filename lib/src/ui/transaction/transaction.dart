@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_holo_date_picker/date_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mandimarket/src/Data_Holder/Purchase_book/inherited_widget.dart';
 import 'package:mandimarket/src/blocs/select_date_bloc.dart';
-import 'package:mandimarket/src/database/transaction_database.dart';
+import 'package:mandimarket/src/constants/colors.dart';
 import 'package:mandimarket/src/resources/format_date.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:sizer/sizer.dart';
-
-import 'add_a_transaction.dart';
-import 'transaction_table.dart';
+import 'purchase_book/table.dart';
 
 class TransactionScreen extends StatefulWidget {
   @override
@@ -201,7 +200,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
             onPressed: () async {
               Push(
                 context,
-                pushTo: TransactionTable(),
+                pushTo: PurchaseBookTable(),
               );
               Pop(newContext);
             },
@@ -330,7 +329,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
         // height: 14.h,
         margin: EdgeInsets.only(left: 1.5.w, right: 3.w),
         child: Material(
-          color: Colors.yellow[700],
+          color: YELLOW700,
           borderRadius: BorderRadius.circular(10),
           child: InkWell(
             onTap: () {
@@ -365,7 +364,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
         // height: 14.h,
         margin: EdgeInsets.only(left: 3.w, right: 1.5.w),
         child: Material(
-          color: Colors.yellow[700],
+          color: YELLOW700,
           borderRadius: BorderRadius.circular(10),
           child: InkWell(
             onTap: () {

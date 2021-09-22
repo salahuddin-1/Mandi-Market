@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mandimarket/src/blocs/debit_credit_bloc.dart';
 import 'package:mandimarket/src/blocs/master_list_pagination.dart';
 import 'package:mandimarket/src/blocs/show_circular_progress_bloc.dart';
+import 'package:mandimarket/src/constants/colors.dart';
 import 'package:mandimarket/src/dependency_injection/user_credentials.dart';
 import 'package:mandimarket/src/models/master_model.dart';
 import 'package:mandimarket/src/resources/master_handler.dart';
@@ -178,7 +179,7 @@ class _AddMasterState extends State<AddMaster> {
           onPressed: () => _submit(),
           icon: Icon(
             Icons.check,
-            color: Colors.black,
+            color: BLACK,
           ),
         );
       },

@@ -29,5 +29,6 @@ class SharedPref {
   static void clearPrefs() async {
     final sharedPref = await SharedPreferences.getInstance();
     sharedPref.clear();
+    print("Prefs Cleared");
   }
 }

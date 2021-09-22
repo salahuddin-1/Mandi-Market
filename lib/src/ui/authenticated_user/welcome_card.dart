@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mandimarket/src/constants/images.dart';
+import 'package:mandimarket/src/models/register_model.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:sizer/sizer.dart';
 
 class WelcomeCard {
-  static welcomeCard(BuildContext oldContext) {
+  static welcomeCard(BuildContext oldContext, RegisterModel userModel) {
     return showDialog(
       context: oldContext,
       builder: (context) {
@@ -22,9 +23,9 @@ class WelcomeCard {
                       children: [
                         _closeButton(context),
                         SizedBox(height: 5.h),
-                        _welcomeUser(),
+                        _welcomeUser(userModel.name),
                         SizedBox(height: 1.h),
-                        _customerId(),
+                        _customerId(userModel.phoneNumber),
                         SizedBox(height: 10.h),
                         Container(
                           decoration: _dialogBoxDecoration(),
@@ -39,7 +40,7 @@ class WelcomeCard {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   _logo(),
-                                  _userInformation(),
+                                  _userInformation(userModel),
                                 ],
                               ),
                               Text("Sheep & Goat Commision Agent")
@@ -109,24 +110,24 @@ class WelcomeCard {
     );
   }
 
-  static Container _userInformation() {
+  static Container _userInformation(RegisterModel userModel) {
     return Container(
       width: 55.w,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Gochi private limited",
+            userModel.companyName,
             style: _userInformationStyle(),
           ),
           SizedBox(height: 0.5.h),
           Text(
-            "Plot no 1, Mandli Talav, Opp Atlake hotel, Mandli talav, Bhayander west, Thane 40101 near malisudha tower",
+            userModel.address,
             style: _userInformationStyle(),
           ),
           SizedBox(height: 0.5.h),
           Text(
-            "8898911744",
+            userModel.phoneNumber,
             style: _userInformationStyle(),
           ),
         ],
@@ -142,7 +143,7 @@ class WelcomeCard {
     );
   }
 
-  static FittedBox _customerId() {
+  static FittedBox _customerId(String phoneNumber) {
     return FittedBox(
       child: Row(
         children: [
@@ -150,7 +151,7 @@ class WelcomeCard {
             'Customer id :  ',
           ),
           Text(
-            '8898199744',
+            phoneNumber,
           ),
         ],
       ),
@@ -164,7 +165,7 @@ class WelcomeCard {
     );
   }
 
-  static FittedBox _welcomeUser() {
+  static FittedBox _welcomeUser(String name) {
     return FittedBox(
       child: Row(
         children: [
@@ -173,7 +174,7 @@ class WelcomeCard {
             style: _welcomeUserStyle(),
           ),
           Text(
-            'Salahuddin Shaikh',
+            name,
             style: _welcomeUserStyle(),
           ),
         ],
