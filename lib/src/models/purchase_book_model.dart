@@ -16,6 +16,7 @@ class PurchaseBookModel {
   final int? documentId;
   final String timestamp;
   final String selectedTimestamp;
+  final int dateHash;
 
   PurchaseBookModel({
     required this.bepariName,
@@ -31,6 +32,7 @@ class PurchaseBookModel {
     this.documentId,
     required this.selectedTimestamp,
     required this.timestamp,
+    required this.dateHash,
   });
 
   Map<String, dynamic> toMap() {
@@ -48,6 +50,7 @@ class PurchaseBookModel {
       'documentId': this.documentId,
       'timestamp': this.timestamp,
       'selectedTimestamp': this.selectedTimestamp,
+      'dateHash': this.dateHash,
     };
 
     return map;
@@ -65,13 +68,10 @@ class PurchaseBookModel {
       discount: map['discount'],
       kacchiRakam: map['kacchiRakam'],
       pakkiRakam: map['pakkiRakam'],
-      selectedTimestamp: formatDate(
-        DateTime.tryParse(
-          map['selectedTimestamp'],
-        ),
-      ),
+      selectedTimestamp: map['selectedTimestamp'],
       timestamp: map['timestamp'],
       documentId: map['documentId'],
+      dateHash: map['dateHash'],
     );
   }
 }

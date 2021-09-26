@@ -25,6 +25,7 @@ class PurchaseBookSqlDB {
   static final String _colPakkiRakam = 'pakkiRakam';
   static final String _colTimestamp = 'timestamp';
   static final String _colSelectedTimestamp = 'selectedTimestamp';
+  static final String _colDateHash = 'dateHash';
 
   static Future<Database> get database async {
     if (_database == null) {
@@ -58,7 +59,8 @@ class PurchaseBookSqlDB {
             $_colKacchiRakam TEXT,
             $_colPakkiRakam TEXT,
             $_colSelectedTimestamp TEXT,     
-            $_colTimestamp TEXT
+            $_colTimestamp TEXT,
+            $_colDateHash INTEGER
            )
           ''',
         );

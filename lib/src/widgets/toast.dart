@@ -34,10 +34,10 @@ class ShowToast {
       duration: Duration(seconds: duration),
       curve: Curves.elasticOut,
       reverseCurve: Curves.linear,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.redAccent[700],
       textStyle: GoogleFonts.raleway(
-        fontWeight: FontWeight.w500,
-        color: Colors.red,
+        fontWeight: FontWeight.w600,
+        color: Colors.white,
       ),
     );
   }

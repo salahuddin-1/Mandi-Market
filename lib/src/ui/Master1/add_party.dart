@@ -154,7 +154,7 @@ class _AddMasterState extends State<AddMaster> {
         },
       ),
       title: Text(
-        "Add party",
+        "Add ${widget.type}",
       ),
       centerTitle: true,
       actions: [
@@ -202,19 +202,28 @@ class _AddMasterState extends State<AddMaster> {
     return StreamBuilder<String>(
       stream: _debitCreditBloc!.getValue(),
       builder: (context, snapshot) {
-        return DropdownButtonFormField(
-          onChanged: (String? val) {
-            _debitCreditBloc!.updateValue(val!);
-          },
-          value: snapshot.data,
-          items: <String>['Debit', 'Credit'].map(
-            (value) {
-              return DropdownMenuItem(
-                value: value,
-                child: Text(value),
-              );
+        return Container(
+          width: double.infinity,
+          child: DropdownButton(
+            onChanged: (String? val) {
+              _debitCreditBloc!.updateValue(val!);
             },
-          ).toList(),
+            isExpanded: true,
+            value: snapshot.data,
+            itemHeight: 10.h,
+            underline: Container(
+              color: Colors.grey,
+              height: 1,
+            ),
+            items: <String>['Debit', 'Credit'].map(
+              (value) {
+                return DropdownMenuItem(
+                  value: value,
+                  child: Text(value),
+                );
+              },
+            ).toList(),
+          ),
         );
       },
     );
@@ -225,10 +234,10 @@ class _AddMasterState extends State<AddMaster> {
       _formKey.currentState!.save();
 
       final masterModel = new MasterModel(
-        partyName: _partyName,
+        partyName: _partyName.trim(),
         address: _address,
-        phoneNumber: _phoneno,
-        openingBalance: int.tryParse(_openingBal)!,
+        phoneNumber: _phoneno.trim(),
+        openingBalance: int.tryParse(_openingBal.trim())!,
         remark: _remark,
         debitOrCredit: _debitCreditBloc!.value,
         timestamp: DateTime.now().toIso8601String(),

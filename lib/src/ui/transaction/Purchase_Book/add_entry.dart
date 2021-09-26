@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mandimarket/src/Data_Holder/Purchase_book/inherited_widget.dart';
 import 'package:mandimarket/src/blocs/Transaction_BLOC/purchase_book_bloc.dart';
 import 'package:mandimarket/src/blocs/Transaction_BLOC/purchase_book_get_user_bloc.dart';
-import 'package:mandimarket/src/blocs/Transaction_BLOC/stream_table.dart';
 import 'package:mandimarket/src/blocs/select_date_bloc.dart';
 import 'package:mandimarket/src/blocs/show_circular_progress_bloc.dart';
+import 'package:mandimarket/src/constants/calculate_date_hash.dart';
 import 'package:mandimarket/src/database/SQFLite/Transaction/sql_resources_purchase_book.dart';
 import 'package:mandimarket/src/dependency_injection/user_credentials.dart';
 import 'package:mandimarket/src/models/purchase_book_model.dart';
@@ -12,12 +13,14 @@ import 'package:mandimarket/src/resources/document_id.dart';
 import 'package:mandimarket/src/resources/format_date.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/resources/saga_book_calculations.dart';
-import 'package:mandimarket/src/ui/transaction/purchase_book/party_list_from_master.dart';
 import 'package:mandimarket/src/validation/party_validation.dart';
 import 'package:mandimarket/src/validation/transaction_validation.dart';
 import 'package:mandimarket/src/widgets/select_date.dart';
+import 'package:mandimarket/src/widgets/toast.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
+
+import 'party_list_from_master_local.dart';
 
 class AddEntryInPurchasebook extends StatefulWidget {
   final SagaBookBloc sagaBookBloc;
@@ -83,13 +86,13 @@ class _AddEntryInPurchasebookState extends State<AddEntryInPurchasebook> {
     _purchaseBookUserBLOC.bepariCntrl.listen(
       (value) {
         _bepariNameController.text = value;
-        _pediNameController.text = value;
       },
     );
 
     _purchaseBookUserBLOC.customerStreamCntrl.listen(
       (value) {
         _customerNameController.text = value;
+        _pediNameController.text = value;
       },
     );
 
@@ -177,7 +180,7 @@ class _AddEntryInPurchasebookState extends State<AddEntryInPurchasebook> {
       onTap: () {
         Push(
           context,
-          pushTo: PartyListFromMaster(
+          pushTo: PartyListFromMasterLocal(
             type: 'Bepari',
             purchaseBookGetUserBLOC: _purchaseBookUserBLOC,
           ),
@@ -198,7 +201,7 @@ class _AddEntryInPurchasebookState extends State<AddEntryInPurchasebook> {
         onTap: () {
           Push(
             context,
-            pushTo: PartyListFromMaster(
+            pushTo: PartyListFromMasterLocal(
               type: 'Customer',
               purchaseBookGetUserBLOC: _purchaseBookUserBLOC,
             ),
@@ -231,7 +234,7 @@ class _AddEntryInPurchasebookState extends State<AddEntryInPurchasebook> {
         onTap: () {
           Push(
             context,
-            pushTo: PartyListFromMaster(
+            pushTo: PartyListFromMasterLocal(
               type: 'Dawan',
               purchaseBookGetUserBLOC: _purchaseBookUserBLOC,
             ),
@@ -252,7 +255,6 @@ class _AddEntryInPurchasebookState extends State<AddEntryInPurchasebook> {
       builder: (context, snapshot) {
         return Container(
           child: TextFormField(
-            // style: TextStyle(fontSize: 10),
             controller: _dateController,
             onTap: () async => await _selectDate(context, snapshot),
             readOnly: true,
@@ -296,6 +298,7 @@ class _AddEntryInPurchasebookState extends State<AddEntryInPurchasebook> {
               setKacchiRakam();
               setDiscount();
               setPakkiRakam();
+              setDalali();
             },
           ),
         ),
@@ -368,7 +371,7 @@ class _AddEntryInPurchasebookState extends State<AddEntryInPurchasebook> {
               keyboardType: TextInputType.phone,
               readOnly: true,
               decoration: InputDecoration(
-                labelText: "Kacchi rakam",
+                labelText: "Sub amount",
                 labelStyle: TextStyle(
                   fontWeight: FontWeight.w100,
                 ),
@@ -388,7 +391,7 @@ class _AddEntryInPurchasebookState extends State<AddEntryInPurchasebook> {
             keyboardType: TextInputType.phone,
             readOnly: true,
             decoration: InputDecoration(
-              labelText: "Pakki rakam",
+              labelText: "Net amount",
               labelStyle: TextStyle(
                 fontWeight: FontWeight.w100,
               ),
@@ -450,6 +453,10 @@ class _AddEntryInPurchasebookState extends State<AddEntryInPurchasebook> {
     }
   }
 
+  void setDalali() {
+    _dalaliController.text = _unitController.text;
+  }
+
   AppBar _appbar() {
     return AppBar(
       leading: IconButton(
@@ -495,8 +502,24 @@ class _AddEntryInPurchasebookState extends State<AddEntryInPurchasebook> {
     );
   }
 
+  bool get dateOutOfRange {
+    final currentDatehash = calculateDateHash(selectDateBloc.fromDateValue!);
+
+    return currentDatehash < PurchaseBookDataHolder.value.fromDateHash ||
+        currentDatehash > PurchaseBookDataHolder.value.toDateHash;
+  }
+
   _submit() {
     if (_formKey.currentState!.validate()) {
+      if (dateOutOfRange) {
+        ShowToast.errorToast(
+          'Error : Selected Date out of Range !!!',
+          context,
+          5,
+        );
+        return;
+      }
+
       updateValues();
       final purchaseBookModel = new PurchaseBookModel(
         bepariName: _bepariNameController.text,
@@ -510,11 +533,12 @@ class _AddEntryInPurchasebookState extends State<AddEntryInPurchasebook> {
         kacchiRakam: _kacchiRakmController.text.trim(),
         pakkiRakam: _pakkiRakmController.text.trim(),
         documentId: getDocumentId,
-        selectedTimestamp: selectDateBloc.fromDateValue!.toIso8601String(),
+        selectedTimestamp: _dateController.text,
         timestamp: DateTime.now().toIso8601String(),
+        dateHash: calculateDateHash(selectDateBloc.fromDateValue!),
       );
 
-      // Set Data
+      //// Set Data
       HandlePurchaseBook(context).addEntryInPurchaseBook(
         purchaseBookModel,
       );

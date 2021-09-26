@@ -4,6 +4,7 @@ import 'package:mandimarket/src/database/Firebase/Transaction/fb_db_purchase_boo
 import 'package:mandimarket/src/database/SQFLite/Transaction/sql_resources_purchase_book.dart';
 import 'package:mandimarket/src/models/purchase_book_model.dart';
 import 'package:mandimarket/src/resources/errors.dart';
+import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/widgets/toast.dart';
 
 class HandlePurchaseBook {
@@ -25,7 +26,8 @@ class HandlePurchaseBook {
 
       PurchaseBookDataHolder.value.feedEntriesToStream();
 
-      ShowToast.successToast(context!);
+      ShowToast.toast('Entry Added Successfully', context!, 3);
+      Pop(context!);
     } catch (e) {
       ErrorCustom.catchError(
         context!,

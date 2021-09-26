@@ -6,6 +6,7 @@ import 'package:mandimarket/src/constants/colors.dart';
 import 'package:mandimarket/src/dependency_injection/user_credentials.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/ui/Master1/add_party.dart';
+import 'package:mandimarket/src/ui/Master1/edit_party.dart';
 import 'package:mandimarket/src/ui/Master1/master_model.dart';
 import 'package:mandimarket/src/widgets/circular_progress.dart';
 import 'package:sizer/sizer.dart';
@@ -22,6 +23,7 @@ class MasterTable extends StatefulWidget {
 class _MasterTableState extends State<MasterTable> {
   final ownersPhoneNumber = userCredentials.ownersPhoneNumber;
   late final FeedEntriesToMasterBLOC _feedEntriesToMasterBLOC;
+  late String type = widget.type.toLowerCase();
 
   @override
   void initState() {
@@ -44,84 +46,91 @@ class _MasterTableState extends State<MasterTable> {
       appBar: _appbar(context),
       floatingActionButton: _floatingActionButton(context),
       body: StreamBuilder<List<MasterModel>>(
-          stream: _feedEntriesToMasterBLOC.stream,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              var masterModelList = snapshot.data;
-              return Center(
-                child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 2.h),
-                  child: Row(
-                    children: [
-                      Container(
-                        decoration: _boxDecorationForTitle(),
-                        height: 73.h,
-                        width: 23.w,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            _emptyText(),
-                            _titleWithFittedBox("Party name"),
-                            _divider(),
-                            _title("Address"),
-                            _divider(),
-                            _title("Phone no"),
-                            _divider(),
-                            _titleWithFittedBox("Opening \n balance"),
-                            _divider(),
-                            _title("Remark"),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          height: 73.h,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: masterModelList!.length,
-                            itemBuilder: (context, index) {
-                              var masterModel = masterModelList[index];
+        stream: _feedEntriesToMasterBLOC.stream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return _errorWidget();
+          } else if (snapshot.hasData) {
+            var masterModelList = snapshot.data;
 
-                              return Container(
-                                margin: EdgeInsets.symmetric(horizontal: 0.5.w),
-                                width: 25.w,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    _editViewButton(
-                                      context,
-                                      docId: "",
-                                    ),
-                                    _subtitle(
-                                      masterModel.partyName,
-                                    ),
-                                    _divider(),
-                                    _subtitle(
-                                      masterModel.address,
-                                    ),
-                                    _divider(),
-                                    _subtitle(masterModel.phoneNumber),
-                                    _divider(),
-                                    _openingBalWithFittedBox(
-                                      masterModel.openingBalance.toString(),
-                                      masterModel.debitOrCredit,
-                                    ),
-                                    _divider(),
-                                    _subtitle(masterModel.remark),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
+            if (masterModelList!.length == 0) {
+              return _noData();
+            }
+            return Center(
+              child: Container(
+                margin: EdgeInsets.symmetric(vertical: 2.h),
+                child: Row(
+                  children: [
+                    Container(
+                      decoration: _boxDecorationForTitle(),
+                      height: 73.h,
+                      width: 23.w,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          _emptyText(),
+                          _titleWithFittedBox("Party name"),
+                          _divider(),
+                          _title("Address"),
+                          _divider(),
+                          _title("Phone no"),
+                          _divider(),
+                          _titleWithFittedBox("Opening \n balance"),
+                          _divider(),
+                          _title("Remark"),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        height: 73.h,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: masterModelList.length,
+                          itemBuilder: (context, index) {
+                            var masterModel = masterModelList[index];
+
+                            return Container(
+                              margin: EdgeInsets.symmetric(horizontal: 0.5.w),
+                              width: 25.w,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  _editViewButton(
+                                    context,
+                                    docId: masterModel.documentId.toString(),
+                                  ),
+                                  _subtitle(
+                                    masterModel.partyName,
+                                  ),
+                                  _divider(),
+                                  _subtitle(
+                                    masterModel.address,
+                                  ),
+                                  _divider(),
+                                  _subtitle(masterModel.phoneNumber),
+                                  _divider(),
+                                  _openingBalWithFittedBox(
+                                    masterModel.openingBalance.toString(),
+                                    masterModel.debitOrCredit,
+                                  ),
+                                  _divider(),
+                                  _subtitle(masterModel.remark),
+                                ],
+                              ),
+                            );
+                          },
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              );
-            }
-            return circularProgress();
-          }),
+              ),
+            );
+          }
+          return circularProgress();
+        },
+      ),
     );
   }
 
@@ -232,7 +241,15 @@ class _MasterTableState extends State<MasterTable> {
 
   InkWell _editViewButton(BuildContext context, {required String docId}) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Push(
+          context,
+          pushTo: EditPartiesInMaster(
+            docId: docId,
+            type: this.type,
+          ),
+        );
+      },
       child: FittedBox(
         child: Container(
           alignment: Alignment.center,
@@ -272,7 +289,7 @@ class _MasterTableState extends State<MasterTable> {
         Push(
           context,
           pushTo: AddMaster(
-            type: widget.type,
+            type: this.type,
           ),
         );
       },

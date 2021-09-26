@@ -12,7 +12,14 @@ import 'package:mandimarket/src/widgets/circular_progress.dart';
 import 'package:sizer/sizer.dart';
 
 class PurchaseBookTable extends StatefulWidget {
-  const PurchaseBookTable({Key? key}) : super(key: key);
+  final int fromDateHash;
+  final int toDateHash;
+
+  PurchaseBookTable({
+    Key? key,
+    required this.fromDateHash,
+    required this.toDateHash,
+  }) : super(key: key);
 
   @override
   _PurchaseBookTableState createState() => _PurchaseBookTableState();
@@ -24,7 +31,10 @@ class _PurchaseBookTableState extends State<PurchaseBookTable> {
 
   @override
   void initState() {
-    _purchaseBookStreamTable = PurchaseBookStreamTable();
+    _purchaseBookStreamTable = PurchaseBookStreamTable(
+      fromDateHash: widget.fromDateHash,
+      toDateHash: widget.toDateHash,
+    );
     // Setting value to access this instance in the children
     PurchaseBookDataHolder.setValue(_purchaseBookStreamTable);
 
@@ -42,55 +52,60 @@ class _PurchaseBookTableState extends State<PurchaseBookTable> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appbar(),
-      body: Stack(
-        children: [
-          Center(
-            child: Container(
-              margin: EdgeInsets.only(top: 2.h, bottom: 5.h),
-              child: Row(
-                children: [
-                  Container(
-                    decoration: _boxDecorationForTitle(),
-                    width: 23.w,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        _emptyText(),
-                        _titleWithFittedBox("Bepari name"),
-                        _divider(),
-                        _title("Customer"),
-                        _divider(),
-                        _title("Pedi"),
-                        _divider(),
-                        _title("Mandi date"),
-                        _divider(),
-                        _title("Unit"),
-                        _divider(),
-                        _title("Rate"),
-                        _divider(),
-                        _title("Amount"),
-                        _divider(),
-                        _title("Discount"),
-                        _divider(),
-                        _title("Commission\nRe 1/Unit"),
-                        _divider(),
-                        _titleWithFittedBox("Net amount"),
-                      ],
-                    ),
-                  ),
-                  StreamBuilder<List<PurchaseBookModel>>(
-                    stream: _purchaseBookStreamTable.stream,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        var purchaseModelList = snapshot.data;
+      body: StreamBuilder<List<PurchaseBookModel>>(
+        stream: _purchaseBookStreamTable.stream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return _errorWidget();
+          } else if (snapshot.hasData) {
+            var purchaseModelList = snapshot.data;
 
-                        return Expanded(
+            if (purchaseModelList!.isEmpty) {
+              return _noData();
+            }
+
+            return Stack(
+              children: [
+                Center(
+                  child: Container(
+                    margin: EdgeInsets.only(top: 2.h, bottom: 5.h),
+                    child: Row(
+                      children: [
+                        Container(
+                          decoration: _boxDecorationForTitle(),
+                          width: 23.w,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              _emptyText(),
+                              _titleWithFittedBox("Bepari name"),
+                              _divider(),
+                              _title("Customer"),
+                              _divider(),
+                              _title("Pedi"),
+                              _divider(),
+                              _title("Mandi date"),
+                              _divider(),
+                              _title("Unit"),
+                              _divider(),
+                              _title("Rate"),
+                              _divider(),
+                              _title("Sub amount"),
+                              _divider(),
+                              _title("Discount"),
+                              _divider(),
+                              _title("Commission\nRe 1/Unit"),
+                              _divider(),
+                              _titleWithFittedBox("Net amount"),
+                            ],
+                          ),
+                        ),
+                        Expanded(
                           child: Container(
                             margin: EdgeInsets.only(left: 1.w),
                             child: ListView.builder(
-                              // controller: scrollController,
                               scrollDirection: Axis.horizontal,
-                              itemCount: purchaseModelList!.length,
+                              itemCount: purchaseModelList.length,
                               itemBuilder: (context, index) {
                                 var purchaseModel = purchaseModelList[index];
 
@@ -142,19 +157,30 @@ class _PurchaseBookTableState extends State<PurchaseBookTable> {
                               },
                             ),
                           ),
-                        );
-                      }
-
-                      return circularProgress();
-                    },
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
-            ),
-          ),
-          _draggableScrollableSheet(),
-        ],
+                ),
+                _draggableScrollableSheet(),
+              ],
+            );
+          }
+          return circularProgress();
+        },
       ),
+    );
+  }
+
+  Center _errorWidget() {
+    return Center(
+      child: Text("Something went wrong"),
+    );
+  }
+
+  Widget _noData() {
+    return Center(
+      child: Text("No Data"),
     );
   }
 

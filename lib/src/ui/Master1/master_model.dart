@@ -18,7 +18,7 @@ class MasterModel {
     required this.openingBalance,
     required this.remark,
     required this.documentId,
-    required this.timestamp,
+    this.timestamp,
   });
 
   factory MasterModel.fromDocument(DocumentSnapshot doc) {
@@ -39,13 +39,16 @@ class MasterModel {
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> map = Map<String, dynamic>();
 
+    if (this.timestamp != null) {
+      map['timestamp'] = this.timestamp;
+    }
+
     map['partyName'] = this.partyName;
     map['address'] = this.address;
     map['phoneNumber'] = this.phoneNumber;
     map['openingBalance'] = this.openingBalance;
     map['debitOrCredit'] = this.debitOrCredit;
     map['remark'] = this.remark;
-    map['timestamp'] = this.timestamp;
     map['documentId'] = this.documentId;
 
     return map;

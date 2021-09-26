@@ -10,21 +10,61 @@ class MasterSqlResources {
     Map<String, Database> dbs = await MasterSqlDB.databases;
 
     return await dbs[type]!.insert(
-      type.toLowerCase(),
+      type,
       map,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
   Future<List<Map<String, dynamic>>> getEntries(String type) async {
-    type = type.toLowerCase();
     Map<String, Database> dbs = await MasterSqlDB.databases;
 
-    var listMap = await dbs[type]!.query(type);
+    return await dbs[type]!.rawQuery(
+      '''SELECT *
+        FROM $type
+        ORDER BY partyName COLLATE NOCASE''',
+    );
+  }
 
-    print(listMap);
+  Future<List<Map<String, dynamic>>> getEntriesForEditing({
+    required String type,
+    required String docId,
+  }) async {
+    Map<String, Database> dbs = await MasterSqlDB.databases;
 
-    return await dbs[type]!.query(type);
+    return await dbs[type]!.query(
+      type,
+      where: 'documentId = ?',
+      whereArgs: [docId],
+    );
+  }
+
+  Future<int> updateEntry({
+    required String type,
+    required int docId,
+    required Map<String, dynamic> map,
+  }) async {
+    Map<String, Database> dbs = await MasterSqlDB.databases;
+
+    return await dbs[type]!.update(
+      type,
+      map,
+      where: 'documentId = ?',
+      whereArgs: [docId],
+    );
+  }
+
+  Future<int> deleteEntry({
+    required String type,
+    required int docId,
+  }) async {
+    Map<String, Database> dbs = await MasterSqlDB.databases;
+
+    return await dbs[type]!.delete(
+      type,
+      where: 'documentId = ?',
+      whereArgs: [docId],
+    );
   }
 
   Future<List<MasterModel>> getListsOfModel(String type) async {
@@ -34,10 +74,31 @@ class MasterSqlResources {
   }
 
   clearDb(String type) async {
-    type = type.toLowerCase();
-
     final db = await MasterSqlDB.databases;
     var val = await db[type]!.delete(type);
     print(val);
+  }
+
+  static Future<bool> getUserByName(String type, String partyName) async {
+    bool partyExists = false;
+
+    Map<String, Database> dbs = await MasterSqlDB.databases;
+
+    var listMap = await dbs[type]!.rawQuery(
+      '''SELECT partyName
+        FROM $type
+        ORDER BY partyName COLLATE NOCASE''',
+    );
+
+    listMap.forEach(
+      (map) {
+        String name = map['partyName'].toString().toLowerCase();
+        if (name == partyName) {
+          partyExists = true;
+        }
+      },
+    );
+
+    return partyExists;
   }
 }

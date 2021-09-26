@@ -3,7 +3,9 @@ import 'package:flutter_holo_date_picker/date_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mandimarket/src/Data_Holder/Purchase_book/inherited_widget.dart';
 import 'package:mandimarket/src/blocs/select_date_bloc.dart';
+import 'package:mandimarket/src/constants/calculate_date_hash.dart';
 import 'package:mandimarket/src/constants/colors.dart';
+import 'package:mandimarket/src/database/SQFLite/Transaction/sql_resources_purchase_book.dart';
 import 'package:mandimarket/src/resources/format_date.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:sizer/sizer.dart';
@@ -193,14 +195,22 @@ class _TransactionScreenState extends State<TransactionScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Pop(newContext),
+            onPressed: () {
+              Pop(newContext);
+            },
             child: Text("Cancel"),
           ),
           TextButton(
             onPressed: () async {
+              var toDate = calculateDateHash(selectDateBloc.toDateValue!);
+              var fromDate = calculateDateHash(selectDateBloc.fromDateValue!);
+
               Push(
                 context,
-                pushTo: PurchaseBookTable(),
+                pushTo: PurchaseBookTable(
+                  fromDateHash: fromDate,
+                  toDateHash: toDate,
+                ),
               );
               Pop(newContext);
             },
