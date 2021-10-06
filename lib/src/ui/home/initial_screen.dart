@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mandimarket/src/constants/colors.dart';
 import 'package:mandimarket/src/ui/Master1/master.dart';
-import 'package:mandimarket/src/ui/admin/admin.dart';
+import 'package:mandimarket/src/ui/administrator/administrator.dart';
 import 'package:mandimarket/src/ui/report/report.dart';
 import 'package:mandimarket/src/ui/transaction/transaction.dart';
 import 'package:mandimarket/src/ui/utilities/utllities.dart';
@@ -70,7 +70,7 @@ class _InitialScreenState extends State<InitialScreen> {
       MasterScreen(),
       TransactionScreen(),
       ReportScreen(),
-      AdminScreen(),
+      AdministratorScreen(),
       UtilitiesScreen(),
     ];
   }

@@ -1,3 +1,7 @@
+import 'package:get/get.dart';
+import 'package:mandimarket/src/blocs/Administrator_BLOC/get_discount_commissionre1_BLOC.dart';
+import 'package:mandimarket/src/database/SQFLite/Adminstrator/sql_resources_calc_para.dart';
+
 class SagaBookCalculations {
   double calculateKacchiRakam({required String rate, required String unit}) {
     var _rate = double.parse(rate);
@@ -25,13 +29,48 @@ class SagaBookCalculations {
   }
 
   double calculateDiscount({required String kacchiRakam}) {
+    var discount = _getX.discount ?? this._discount;
+
     var _kacchiRakam = double.parse(kacchiRakam);
-    var discount = _kacchiRakam * 0.05;
+
+    discount = _kacchiRakam * (discount / 100);
     discount = getValueUpto2Precisions(discount);
+
     return discount;
+  }
+
+  double calculateDalali({required num units}) {
+    var commissionRe1 = _getX.commissionRe1 ?? this._commissionRe1;
+
+    return commissionRe1! * units;
   }
 
   double getValueUpto2Precisions(double value) {
     return double.parse(value.toStringAsFixed(2));
+  }
+
+  final _getX = Get.put(GetXDiscountAndCommissionRe());
+
+  var _discount;
+  _getDiscount() async {
+    var map = await SQLresourcesCalcPara.getDiscountAndCommissionRe1();
+
+    var discount = double.tryParse(map['discount']);
+
+    this._discount = discount;
+  }
+
+  double? _commissionRe1;
+  _getCommissionRe1() async {
+    var map = await SQLresourcesCalcPara.getDiscountAndCommissionRe1();
+
+    var commissionRe1 = double.tryParse(map['commissionRe1']);
+
+    this._commissionRe1 = commissionRe1;
+  }
+
+  SagaBookCalculations() {
+    _getDiscount();
+    _getCommissionRe1();
   }
 }

@@ -444,17 +444,21 @@ class _AddEntryInPurchasebookState extends State<AddEntryInPurchasebook> {
     var kacchiRakam = _kacchiRakmController.text.trim();
 
     if (kacchiRakam.isNotEmpty) {
-      var discount = _sagaBookCalculations
-          .calculateDiscount(
-            kacchiRakam: kacchiRakam,
-          )
-          .toString();
-      _discountController.text = discount;
+      var discount = _sagaBookCalculations.calculateDiscount(
+        kacchiRakam: kacchiRakam,
+      );
+      _discountController.text = discount.toString();
     }
   }
 
   void setDalali() {
-    _dalaliController.text = _unitController.text;
+    if (_unitController.text.isNotEmpty) {
+      _dalaliController.text = _sagaBookCalculations
+          .calculateDalali(
+            units: num.tryParse(_unitController.text)!,
+          )
+          .toString();
+    }
   }
 
   AppBar _appbar() {

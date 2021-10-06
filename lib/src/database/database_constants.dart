@@ -5,4 +5,6 @@ class Database {
   static final mastersRef = FirebaseFirestore.instance.collection("master");
   static final transactionRef =
       FirebaseFirestore.instance.collection("transaction");
+  static final administratorRef =
+      FirebaseFirestore.instance.collection("administrator");
 }

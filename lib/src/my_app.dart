@@ -30,6 +30,27 @@ class MyApp extends StatelessWidget {
       textTheme: _textTheme(context),
       textButtonTheme: _textButtonTheme(),
       appBarTheme: _appbarTheme(),
+      inputDecorationTheme: _inputDecorationTheme(),
+      textSelectionTheme: _cusrsorTheme(),
+    );
+  }
+
+  TextSelectionThemeData _cusrsorTheme() {
+    return TextSelectionThemeData(
+      cursorColor: Colors.black,
+    );
+  }
+
+  InputDecorationTheme _inputDecorationTheme() {
+    return InputDecorationTheme(
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.black,
+        ),
+      ),
+      labelStyle: TextStyle(
+        color: Colors.black,
+      ),
     );
   }
 

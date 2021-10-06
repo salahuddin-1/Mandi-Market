@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_holo_date_picker/date_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mandimarket/src/Data_Holder/Purchase_book/inherited_widget.dart';
 import 'package:mandimarket/src/blocs/select_date_bloc.dart';
 import 'package:mandimarket/src/constants/calculate_date_hash.dart';
 import 'package:mandimarket/src/constants/colors.dart';
-import 'package:mandimarket/src/database/SQFLite/Transaction/sql_resources_purchase_book.dart';
 import 'package:mandimarket/src/resources/format_date.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:sizer/sizer.dart';
+import 'Billing_Entry/billing_entries_dialog.dart';
+import 'Billing_Entry/table_billing_entry.dart';
 import 'purchase_book/table.dart';
 
 class TransactionScreen extends StatefulWidget {
@@ -20,6 +20,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
   late final TextEditingController fromDateContrl;
   late final TextEditingController toDateContrl;
   late final SelectDateBloc selectDateBloc;
+  late final BillingEntryDialog _billingEntryDialog;
 
   @override
   void initState() {
@@ -35,6 +36,8 @@ class _TransactionScreenState extends State<TransactionScreen> {
     );
     selectDateBloc = new SelectDateBloc();
 
+    _billingEntryDialog = BillingEntryDialog();
+
     super.initState();
   }
 
@@ -43,6 +46,8 @@ class _TransactionScreenState extends State<TransactionScreen> {
     fromDateContrl.dispose();
     toDateContrl.dispose();
     selectDateBloc.dispose();
+
+    _billingEntryDialog.dispose();
 
     super.dispose();
   }
@@ -54,7 +59,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
       body: Container(
         padding: EdgeInsets.only(top: 1.5.h, bottom: 2.h),
         child: Column(
-          // padding: EdgeInsets.symmetric(vertical: 3.h),
           children: [
             Expanded(
               child: Padding(
@@ -74,7 +78,11 @@ class _TransactionScreenState extends State<TransactionScreen> {
                     _rightChild(
                       "Billing entry",
                       onTap: () {
-                        omTapTransactionType(context, "Customer");
+                        _billingEntryDialog.selectDate(context);
+                        // Push(
+                        //   context,
+                        //   pushTo: BillingEntry(),
+                        // );
                       },
                     ),
                   ],

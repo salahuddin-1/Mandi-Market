@@ -1,7 +1,5 @@
 //
 
-import 'package:mandimarket/src/resources/format_date.dart';
-
 class PurchaseBookModel {
   final String bepariName;
   final String customerName;

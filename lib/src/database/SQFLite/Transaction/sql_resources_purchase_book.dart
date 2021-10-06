@@ -1,9 +1,10 @@
-import 'package:mandimarket/src/constants/calculate_date_hash.dart';
 import 'package:mandimarket/src/database/SQFLite/Transaction/sql_db_purchase_book.dart';
 import 'package:mandimarket/src/models/purchase_book_model.dart';
+import 'package:mandimarket/src/resources/format_date.dart';
 import 'package:sqflite/sqflite.dart';
 
 class PurchaseBookSQLResources {
+  // INSERT
   Future<int> insertEntry(Map<String, dynamic> map) async {
     final db = await PurchaseBookSqlDB.database;
 
@@ -14,6 +15,7 @@ class PurchaseBookSQLResources {
     );
   }
 
+  // GET
   Future<List<Map<String, dynamic>>> getEntries() async {
     final db = await PurchaseBookSqlDB.database;
 
@@ -28,6 +30,23 @@ class PurchaseBookSQLResources {
     return listMap;
   }
 
+  // SINGLE ENTRIES
+  Future<List<Map<String, dynamic>>> getEntriesFromPurchaseBookByDate(
+    DateTime date,
+  ) async {
+    final db = await PurchaseBookSqlDB.database;
+
+    var listMap = await db.rawQuery(
+      '''SELECT *
+        FROM ${PurchaseBookSqlDB.table}
+        WHERE selectedTimestamp == '${formatDate(date)}'
+        ORDER BY bepariName COLLATE NOCASE''',
+    );
+
+    return listMap;
+  }
+
+  // GET MODEL
   Future<List<PurchaseBookModel>> getListModel() async {
     var listMaps = await getEntries();
     return listMaps

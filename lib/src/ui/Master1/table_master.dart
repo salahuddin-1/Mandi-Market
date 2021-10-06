@@ -9,6 +9,7 @@ import 'package:mandimarket/src/ui/Master1/add_party.dart';
 import 'package:mandimarket/src/ui/Master1/edit_party.dart';
 import 'package:mandimarket/src/ui/Master1/master_model.dart';
 import 'package:mandimarket/src/widgets/circular_progress.dart';
+import 'package:mandimarket/src/widgets/empty_text.dart';
 import 'package:sizer/sizer.dart';
 
 class MasterTable extends StatefulWidget {
@@ -68,7 +69,7 @@ class _MasterTableState extends State<MasterTable> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          _emptyText(),
+                          const EmptyText(),
                           _titleWithFittedBox("Party name"),
                           _divider(),
                           _title("Address"),
@@ -183,15 +184,6 @@ class _MasterTableState extends State<MasterTable> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Text _emptyText() {
-    return Text(
-      "",
-      style: TextStyle(
-        fontSize: 11,
       ),
     );
   }
