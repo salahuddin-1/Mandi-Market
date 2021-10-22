@@ -23,10 +23,10 @@ class MyApp extends StatelessWidget {
 
   ThemeData _themeData(BuildContext context) {
     return ThemeData(
-      primaryColor: YELLOW700,
-      accentColor: YELLOW700,
+      primaryColor: CYAN900,
+      accentColor: CYAN900,
       scaffoldBackgroundColor: Colors.white,
-      buttonColor: YELLOW700,
+      buttonColor: CYAN900,
       textTheme: _textTheme(context),
       textButtonTheme: _textButtonTheme(),
       appBarTheme: _appbarTheme(),
@@ -45,11 +45,11 @@ class MyApp extends StatelessWidget {
     return InputDecorationTheme(
       focusedBorder: UnderlineInputBorder(
         borderSide: BorderSide(
-          color: Colors.black,
+          color: CYAN900,
         ),
       ),
       labelStyle: TextStyle(
-        color: Colors.black,
+        color: BLACK,
       ),
     );
   }
@@ -66,7 +66,7 @@ class MyApp extends StatelessWidget {
         textStyle: MaterialStateProperty.all(
           GoogleFonts.raleway(
             fontWeight: FontWeight.bold,
-            color: YELLOW700,
+            color: CYAN900,
             fontSize: 13.sp,
           ),
         ),
@@ -76,15 +76,18 @@ class MyApp extends StatelessWidget {
 
   AppBarTheme _appbarTheme() {
     return AppBarTheme(
-      centerTitle: true,
+      centerTitle: false,
       titleTextStyle: GoogleFonts.raleway(
-        color: BLACK,
+        color: WHITE,
       ),
       textTheme: TextTheme(
         headline6: GoogleFonts.raleway(
-          color: BLACK,
+          color: WHITE,
           fontSize: 14.sp,
         ),
+      ),
+      iconTheme: IconThemeData(
+        color: BLACK,
       ),
     );
   }

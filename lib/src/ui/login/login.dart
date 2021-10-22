@@ -120,7 +120,7 @@ class _LoginState extends State<Login> {
               'Register',
               style: GoogleFonts.raleway(
                 fontWeight: FontWeight.bold,
-                color: YELLOW700,
+                color: CYAN900,
               ),
             ),
           ),
@@ -137,7 +137,7 @@ class _LoginState extends State<Login> {
           "Forgot password ?",
           style: GoogleFonts.raleway(
             fontWeight: FontWeight.bold,
-            color: YELLOW700,
+            color: CYAN900,
           ),
         ),
         onPressed: () {

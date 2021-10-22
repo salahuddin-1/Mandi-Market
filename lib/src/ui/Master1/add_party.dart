@@ -8,6 +8,7 @@ import 'package:mandimarket/src/resources/document_id.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/ui/Master1/master_model.dart';
 import 'package:mandimarket/src/validation/party_validation.dart';
+import 'package:mandimarket/src/widgets/app_bar.dart';
 import 'package:mandimarket/src/widgets/circular_progress.dart';
 import 'package:sizer/sizer.dart';
 
@@ -146,17 +147,8 @@ class _AddMasterState extends State<AddMaster> {
   }
 
   AppBar _appbar(BuildContext context) {
-    return AppBar(
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios_sharp),
-        onPressed: () {
-          Pop(context);
-        },
-      ),
-      title: Text(
-        "Add ${widget.type}",
-      ),
-      centerTitle: true,
+    return AppBarCustom(context).appbar(
+      title: "Add ${widget.type}",
       actions: [
         IconButton(
           onPressed: () {

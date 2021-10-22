@@ -1,3 +1,6 @@
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:data_connection_checker/data_connection_checker.dart'
+    show DataConnectionChecker;
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mandimarket/src/Data_Holder/Administrator/inherited_widget.dart';
@@ -17,6 +20,16 @@ class HandleCalcParam {
   final _getX = Get.put(GetXDiscountAndCommissionRe());
 
   void addParameters(CalcParaModel calcParaModel) async {
+    if (!await DataConnectionChecker().hasConnection) {
+      ShowToast.toast(
+        'No Internet Connection',
+        context!,
+        4,
+      );
+
+      return;
+    }
+
     try {
       await SQLresourcesCalcPara.insertEntry(calcParaModel.toMap());
 

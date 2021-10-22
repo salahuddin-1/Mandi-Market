@@ -1,8 +1,11 @@
-import 'package:mandimarket/src/database/SQFLite/Master/sql_db_master.dart';
-import 'package:mandimarket/src/ui/Master1/master_model.dart';
+import '/src/database/SQFLite/Master/sql_db_master.dart';
+import '/src/ui/Master1/master_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class MasterSqlResources {
+//
+// ----------------- INSERT ENTRY ----------------------------------------------
+
   Future<int> insertEntry({
     required Map<String, dynamic> map,
     required String type,
@@ -16,6 +19,8 @@ class MasterSqlResources {
     );
   }
 
+// ------------------ GET ENTRIES ----------------------------------------------
+
   Future<List<Map<String, dynamic>>> getEntries(String type) async {
     Map<String, Database> dbs = await MasterSqlDB.databases;
 
@@ -25,6 +30,8 @@ class MasterSqlResources {
         ORDER BY partyName COLLATE NOCASE''',
     );
   }
+
+// ------------------- GET ENTRIES FOR EDITING ---------------------------------
 
   Future<List<Map<String, dynamic>>> getEntriesForEditing({
     required String type,
@@ -38,6 +45,8 @@ class MasterSqlResources {
       whereArgs: [docId],
     );
   }
+
+// --------------------- UPDATE ENTRY ------------------------------------------
 
   Future<int> updateEntry({
     required String type,
@@ -54,6 +63,8 @@ class MasterSqlResources {
     );
   }
 
+// --------------------------- DELETE ENTRY ------------------------------------
+
   Future<int> deleteEntry({
     required String type,
     required int docId,
@@ -67,17 +78,23 @@ class MasterSqlResources {
     );
   }
 
+// ----------------------- GET LISTS OF MODEL -----------------------------------
+
   Future<List<MasterModel>> getListsOfModel(String type) async {
     var listmap = await getEntries(type);
 
     return listmap.map((map) => MasterModel.fromJSON(map)).toList();
   }
 
+// ------------------------ CLEAR DB ------------------------------------------
+
   clearDb(String type) async {
     final db = await MasterSqlDB.databases;
     var val = await db[type]!.delete(type);
     print(val);
   }
+
+// ------------------------ GET USER BY NAME -----------------------------------
 
   static Future<bool> getUserByName(String type, String partyName) async {
     bool partyExists = false;
@@ -101,4 +118,6 @@ class MasterSqlResources {
 
     return partyExists;
   }
+
+// -----------------------------------------------------------------------------
 }

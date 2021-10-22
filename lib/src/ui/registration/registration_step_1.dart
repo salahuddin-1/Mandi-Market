@@ -219,7 +219,7 @@ class _Step1State extends State<Step1> {
               'Login',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: YELLOW700,
+                color: CYAN900,
               ),
             ),
           ),

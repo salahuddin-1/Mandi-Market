@@ -301,7 +301,7 @@ class _Step2State extends State<Step2> {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: YELLOW700,
+        backgroundColor: CYAN900,
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

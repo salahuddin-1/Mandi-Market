@@ -41,14 +41,13 @@ class AppBarCustom {
     Function? onPressedAdd,
   }) {
     return AppBar(
-      backgroundColor: Colors.brown[900],
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(40),
         ),
       ),
       leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios_sharp, color: Colors.white),
+        icon: Icon(Icons.arrow_back_ios_sharp),
         iconSize: 15.sp,
         onPressed: () {
           Pop(context);

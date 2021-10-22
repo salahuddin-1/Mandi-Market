@@ -78,7 +78,7 @@ class WelcomeScreen extends StatelessWidget {
         ),
       ),
       decoration: BoxDecoration(
-        color: YELLOW700,
+        color: CYAN900,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(

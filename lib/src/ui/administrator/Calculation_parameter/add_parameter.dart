@@ -6,8 +6,8 @@ import 'package:mandimarket/src/models/calc_para_model.dart';
 import 'package:mandimarket/src/resources/Administrator/handle_calc_param.dart';
 import 'package:mandimarket/src/resources/document_id.dart';
 import 'package:mandimarket/src/resources/format_date.dart';
-import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/validation/parameter_validation.dart';
+import 'package:mandimarket/src/widgets/app_bar.dart';
 import 'package:mandimarket/src/widgets/select_date.dart';
 import 'package:sizer/sizer.dart';
 
@@ -54,6 +54,17 @@ class _AddParameterState extends State<AddParameter> {
     _toDateCntrl = new TextEditingController(
       text: formatDate(DateTime.now()),
     );
+  }
+
+  @override
+  void dispose() {
+    _commisionCntrl.dispose();
+    _discountCntrl.dispose();
+    _remarkCntrl.dispose();
+    _karkuniCntrl.dispose();
+    _commisionRe1Cntrl.dispose();
+    _selectDateBloc.dispose();
+    super.dispose();
   }
 
   @override
@@ -120,9 +131,12 @@ class _AddParameterState extends State<AddParameter> {
       title: 'From',
       selectedDate: selectedDate,
     );
-    final fDate = formatDate(date);
-    _fromDateCntrl.text = fDate;
-    _selectDateBloc.selectFromDate(date);
+
+    if (date != null) {
+      final fDate = formatDate(date);
+      _fromDateCntrl.text = fDate;
+      _selectDateBloc.selectFromDate(date);
+    }
   }
 
   showToDate(DateTime selectedDate) async {
@@ -132,9 +146,11 @@ class _AddParameterState extends State<AddParameter> {
       selectedDate: selectedDate,
     );
 
-    final fDate = formatDate(date);
-    _toDateCntrl.text = fDate;
-    _selectDateBloc.selectToDate(date!);
+    if (date != null) {
+      final fDate = formatDate(date);
+      _toDateCntrl.text = fDate;
+      _selectDateBloc.selectToDate(date);
+    }
   }
 
   _toDateTextField() {
@@ -161,6 +177,7 @@ class _AddParameterState extends State<AddParameter> {
   TextFormField _discountTextField() {
     return TextFormField(
       controller: _discountCntrl,
+      keyboardType: TextInputType.phone,
       validator: (val) => ParameterValidation.discount(val!),
       decoration: InputDecoration(
         labelText: "Discount  (%)",
@@ -171,6 +188,7 @@ class _AddParameterState extends State<AddParameter> {
   TextFormField _commissionTextField() {
     return TextFormField(
       controller: _commisionCntrl,
+      keyboardType: TextInputType.phone,
       validator: (val) => ParameterValidation.commission(val!),
       decoration: InputDecoration(
         labelText: "Commission  (Rs.)",
@@ -181,6 +199,7 @@ class _AddParameterState extends State<AddParameter> {
   TextFormField _karkurniTextField() {
     return TextFormField(
       controller: _karkuniCntrl,
+      keyboardType: TextInputType.phone,
       validator: (val) => ParameterValidation.karkuni(val!),
       decoration: InputDecoration(
         labelText: "Karkuni  (Rs.)",
@@ -200,6 +219,7 @@ class _AddParameterState extends State<AddParameter> {
   TextFormField _commissionRe1TextField() {
     return TextFormField(
       controller: _commisionRe1Cntrl,
+      keyboardType: TextInputType.phone,
       validator: (val) => ParameterValidation.commissionRe1(val!),
       decoration: InputDecoration(
         labelText: "Commission Re. 1 / unit",
@@ -208,28 +228,8 @@ class _AddParameterState extends State<AddParameter> {
   }
 
   AppBar _appbar() {
-    return AppBar(
-      backgroundColor: Colors.brown[900],
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(40),
-        ),
-      ),
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios_sharp),
-        iconSize: 15.sp,
-        color: Colors.white,
-        onPressed: () {
-          Pop(context);
-        },
-      ),
-      title: Text(
-        "Add Parameter",
-        style: TextStyle(
-          color: Colors.white,
-        ),
-      ),
-      centerTitle: false,
+    return AppBarCustom(context).appbar(
+      title: "Add Parameter",
       actions: [
         IconButton(
           onPressed: () {
@@ -237,7 +237,6 @@ class _AddParameterState extends State<AddParameter> {
           },
           icon: Icon(
             Icons.delete,
-            color: Colors.white,
           ),
         ),
         IconButton(
@@ -246,14 +245,12 @@ class _AddParameterState extends State<AddParameter> {
           },
           icon: Icon(
             Icons.hourglass_bottom,
-            color: Colors.white,
           ),
         ),
         IconButton(
           onPressed: _submit,
           icon: Icon(
             Icons.check,
-            color: Colors.white,
           ),
         ),
       ],

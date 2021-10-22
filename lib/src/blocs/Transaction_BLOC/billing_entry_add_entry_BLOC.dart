@@ -5,15 +5,32 @@ import 'package:rxdart/rxdart.dart';
 class BillingEntryAddEntryBLOC {
   final _streamCntrl = BehaviorSubject<List<BillingEntryModel>>();
 
-  void addEntry(BillingEntryModel billingEntryModel) {
+  void addEntry(BillingEntryModel billingEntryModel) async {
     BillingEntriesSQLResources.insertEntry(
       billingEntryModel.toMap(),
     );
 
-    BillingEntriesSQLResources.getEntries();
+    _streamCntrl.add(await getEntries());
   }
 
   void dispose() {
     _streamCntrl.close();
+  }
+
+  Future<List<BillingEntryModel>> getEntries() async {
+    var listMaps = await BillingEntriesSQLResources.getEntriesByDate(date);
+
+    return listMaps
+        .map(
+          (map) => BillingEntryModel.fromJson(map),
+        )
+        .toList();
+  }
+
+  late DateTime date;
+
+  // Constructor
+  BillingEntryAddEntryBLOC(DateTime date) {
+    this.date = date;
   }
 }

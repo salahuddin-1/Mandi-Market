@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mandimarket/src/constants/colors.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/ui/Master1/table_master.dart';
+import 'package:mandimarket/src/widgets/main_widgets.dart';
 import 'package:sizer/sizer.dart';
 
 class MasterScreen extends StatelessWidget {
@@ -10,70 +10,40 @@ class MasterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appbar(),
+      appBar: appbarMain(),
       body: Container(
-        padding: EdgeInsets.only(top: 3.h, bottom: 15.h),
+        padding: EdgeInsets.only(top: 2.h, bottom: 3.h),
         child: Column(
           children: [
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 2.h),
-                child: Row(
-                  children: [
-                    _leftChild(
-                      "Bepari",
-                      onTap: () {
-                        onTapMasterType(context, "Bepari");
-                      },
-                    ),
-                    _rightChild(
-                      "Customer",
-                      onTap: () {
-                        onTapMasterType(context, "Customer");
-                      },
-                    ),
-                  ],
-                ),
-              ),
+            MainTitleBox(
+              title: "Bepari",
+              onPressed: () {
+                onTapMasterType(context, 'Bepari');
+              },
             ),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 2.h),
-                child: Row(
-                  children: [
-                    _leftChild(
-                      "Gawaal",
-                      onTap: () {
-                        onTapMasterType(context, "Gawaal");
-                      },
-                    ),
-                    _rightChild(
-                      "Dawan",
-                      onTap: () {
-                        onTapMasterType(context, "Dawan");
-                      },
-                    ),
-                  ],
-                ),
-              ),
+            MainTitleBox(
+              title: "Customer",
+              onPressed: () {
+                onTapMasterType(context, 'Customer');
+              },
             ),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 2.h),
-                child: Row(
-                  children: [
-                    _leftChild(
-                      "Other Parties",
-                      onTap: () {
-                        onTapMasterType(context, "OtherParties");
-                      },
-                    ),
-                    Expanded(
-                      child: Text(""),
-                    ),
-                  ],
-                ),
-              ),
+            MainTitleBox(
+              title: "Dawan",
+              onPressed: () {
+                onTapMasterType(context, 'Dawan');
+              },
+            ),
+            MainTitleBox(
+              title: "Gawaal",
+              onPressed: () {
+                onTapMasterType(context, 'Gawaal');
+              },
+            ),
+            MainTitleBox(
+              title: "Other Parties",
+              onPressed: () {
+                onTapMasterType(context, 'OtherParties');
+              },
             ),
           ],
         ),
@@ -87,86 +57,6 @@ class MasterScreen extends StatelessWidget {
       pushTo: MasterTable(
         type: type,
       ),
-    );
-  }
-
-  Expanded _rightChild(String title, {Function? onTap}) {
-    return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              offset: Offset(4, 4),
-              blurRadius: 12,
-              spreadRadius: -8,
-            ),
-          ],
-        ),
-        // height: 14.h,
-        margin: EdgeInsets.only(left: 1.5.w, right: 3.w),
-        child: Material(
-          color: YELLOW700,
-          borderRadius: BorderRadius.circular(10),
-          child: InkWell(
-            onTap: () {
-              onTap!();
-            },
-            child: Ink(
-              child: Center(
-                child: Text(
-                  title,
-                  textScaleFactor: 0.81.sp,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Expanded _leftChild(String title, {Function? onTap}) {
-    return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              offset: Offset(4, 4),
-              blurRadius: 12,
-              spreadRadius: -8,
-            ),
-          ],
-        ),
-        // height: 14.h,
-        margin: EdgeInsets.only(left: 3.w, right: 1.5.w),
-        child: Material(
-          color: YELLOW700,
-          borderRadius: BorderRadius.circular(10),
-          child: InkWell(
-            onTap: () {
-              onTap!();
-            },
-            child: Ink(
-              child: Center(
-                child: Text(
-                  title,
-                  textScaleFactor: 0.81.sp,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  AppBar _appbar() {
-    return AppBar(
-      title: Text(
-        'Mandi Market',
-      ),
-      backgroundColor: Colors.white,
-      elevation: 0,
     );
   }
 }

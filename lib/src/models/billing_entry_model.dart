@@ -18,7 +18,7 @@ class BillingEntryModel {
   String baki;
   String description;
   String miscExpenses;
-  String documentId;
+  int documentId;
 
   BillingEntryModel({
     required this.selectedTimestamp,

@@ -15,6 +15,7 @@ import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/resources/saga_book_calculations.dart';
 import 'package:mandimarket/src/validation/party_validation.dart';
 import 'package:mandimarket/src/validation/transaction_validation.dart';
+import 'package:mandimarket/src/widgets/app_bar.dart';
 import 'package:mandimarket/src/widgets/select_date.dart';
 import 'package:mandimarket/src/widgets/toast.dart';
 import 'package:sizer/sizer.dart';
@@ -278,8 +279,10 @@ class _AddEntryInPurchasebookState extends State<AddEntryInPurchasebook> {
       selectedDate: snapshot.data!,
     );
 
-    selectDateBloc.selectFromDate(date);
-    _dateController.text = formatDate(date);
+    if (date != null) {
+      selectDateBloc.selectFromDate(date);
+      _dateController.text = formatDate(date);
+    }
   }
 
   _nangAndRate() {
@@ -462,15 +465,8 @@ class _AddEntryInPurchasebookState extends State<AddEntryInPurchasebook> {
   }
 
   AppBar _appbar() {
-    return AppBar(
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios_sharp),
-        onPressed: () {
-          Pop(context);
-        },
-      ),
-      title: Text("Add Purchase Entry"),
-      centerTitle: false,
+    return AppBarCustom(context).appbar(
+      title: "Add Purchase Entry",
       actions: [
         IconButton(
           onPressed: () {
@@ -537,7 +533,7 @@ class _AddEntryInPurchasebookState extends State<AddEntryInPurchasebook> {
         kacchiRakam: _kacchiRakmController.text.trim(),
         pakkiRakam: _pakkiRakmController.text.trim(),
         documentId: getDocumentId,
-        selectedTimestamp: _dateController.text,
+        selectedTimestamp: selectDateBloc.fromDateValue!.toIso8601String(),
         timestamp: DateTime.now().toIso8601String(),
         dateHash: calculateDateHash(selectDateBloc.fromDateValue!),
       );

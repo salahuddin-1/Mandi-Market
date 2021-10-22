@@ -35,17 +35,17 @@ class LoginButton extends StatelessWidget {
                         "$title ",
                         style: GoogleFonts.raleway(
                           fontWeight: FontWeight.w500,
-                          color: BLACK,
+                          color: WHITE,
                           fontSize: 12.sp,
                         ),
                       ),
-                      Icon(Icons.arrow_forward),
+                      // Icon(Icons.arrow_forward_ios_sharp, color: WHITE),
                     ],
                   ),
           ),
         ),
         decoration: BoxDecoration(
-          color: YELLOW700,
+          color: CYAN900,
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(

@@ -6,9 +6,13 @@ import 'package:mandimarket/src/blocs/Transaction_BLOC/stream_table.dart';
 import 'package:mandimarket/src/constants/colors.dart';
 import 'package:mandimarket/src/database/SQFLite/Transaction/sql_resources_purchase_book.dart';
 import 'package:mandimarket/src/models/purchase_book_model.dart';
+import 'package:mandimarket/src/resources/format_date.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/ui/transaction/purchase_book/add_entry.dart';
+import 'package:mandimarket/src/widgets/app_bar.dart';
 import 'package:mandimarket/src/widgets/circular_progress.dart';
+import 'package:mandimarket/src/widgets/empty_text.dart';
+import 'package:mandimarket/src/widgets/table_widgets.dart';
 import 'package:sizer/sizer.dart';
 
 class PurchaseBookTable extends StatefulWidget {
@@ -56,12 +60,12 @@ class _PurchaseBookTableState extends State<PurchaseBookTable> {
         stream: _purchaseBookStreamTable.stream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return _errorWidget();
+            return const ErrorText();
           } else if (snapshot.hasData) {
             var purchaseModelList = snapshot.data;
 
             if (purchaseModelList!.isEmpty) {
-              return _noData();
+              return const NoData();
             }
 
             return Stack(
@@ -72,31 +76,61 @@ class _PurchaseBookTableState extends State<PurchaseBookTable> {
                     child: Row(
                       children: [
                         Container(
-                          decoration: _boxDecorationForTitle(),
+                          decoration: BoxDecorationFor.title(),
                           width: 23.w,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              _emptyText(),
-                              _titleWithFittedBox("Bepari name"),
-                              _divider(),
-                              _title("Customer"),
-                              _divider(),
-                              _title("Pedi"),
-                              _divider(),
-                              _title("Mandi date"),
-                              _divider(),
-                              _title("Unit"),
-                              _divider(),
-                              _title("Rate"),
-                              _divider(),
-                              _title("Sub amount"),
-                              _divider(),
-                              _title("Discount"),
-                              _divider(),
-                              _title("Commission\nRe 1/Unit"),
-                              _divider(),
-                              _titleWithFittedBox("Net amount"),
+                              const EmptyText(),
+                              TitleWithFittedBox(
+                                text: "Bepari",
+                                fontSize: _fontSize,
+                              ),
+                              const DividerForTable(),
+                              TitleTable(
+                                text: "Customer",
+                                fontSize: _fontSize,
+                              ),
+                              const DividerForTable(),
+                              TitleTable(
+                                text: "Pedi",
+                                fontSize: _fontSize,
+                              ),
+                              const DividerForTable(),
+                              TitleTable(
+                                text: "Mandi date",
+                                fontSize: _fontSize,
+                              ),
+                              const DividerForTable(),
+                              TitleTable(
+                                text: "Unit",
+                                fontSize: _fontSize,
+                              ),
+                              const DividerForTable(),
+                              TitleTable(
+                                text: "Rate",
+                                fontSize: _fontSize,
+                              ),
+                              const DividerForTable(),
+                              TitleTable(
+                                text: "Sub amount",
+                                fontSize: _fontSize,
+                              ),
+                              const DividerForTable(),
+                              TitleTable(
+                                text: "Discount",
+                                fontSize: _fontSize,
+                              ),
+                              const DividerForTable(),
+                              TitleTable(
+                                text: "Commission\nRe 1/Unit",
+                                fontSize: _fontSize,
+                              ),
+                              const DividerForTable(),
+                              TitleWithFittedBox(
+                                text: "Net amount",
+                                fontSize: _fontSize,
+                              ),
                             ],
                           ),
                         ),
@@ -117,39 +151,61 @@ class _PurchaseBookTableState extends State<PurchaseBookTable> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                      _editViewButton(
-                                        context,
-                                        docId: "",
+                                      EditViewButton(
+                                        onPressed: () {},
                                       ),
-                                      _subtitle(purchaseModel.bepariName),
-                                      _divider(),
-                                      _subtitle(purchaseModel.customerName),
-                                      _divider(),
-                                      _subtitle(purchaseModel.pediName),
-                                      _divider(),
-                                      _subtitle(
-                                        purchaseModel.selectedTimestamp,
+                                      SubtitleForTable(
+                                        text: purchaseModel.bepariName,
+                                        fontSize: _fontSize,
                                       ),
-                                      _divider(),
-                                      _subtitle(purchaseModel.unit),
-                                      _divider(),
-                                      _subtitleWithFittedBox(
-                                        purchaseModel.rate,
+                                      const DividerForTable(),
+                                      SubtitleForTable(
+                                        text: purchaseModel.customerName,
+                                        fontSize: _fontSize,
                                       ),
-                                      _divider(),
-                                      _subtitleWithFittedBox(
-                                        purchaseModel.kacchiRakam,
+                                      const DividerForTable(),
+                                      SubtitleForTable(
+                                        text: purchaseModel.pediName,
+                                        fontSize: _fontSize,
                                       ),
-                                      _divider(),
-                                      _subtitleWithFittedBox(
-                                        purchaseModel.discount,
+                                      const DividerForTable(),
+                                      SubtitleForTable(
+                                        fontSize: _fontSize,
+                                        text: formatDateShort(
+                                          DateTime.tryParse(
+                                            purchaseModel.selectedTimestamp,
+                                          ),
+                                        ),
                                       ),
-                                      _divider(),
-                                      _subtitleWithFittedBox(
-                                          purchaseModel.dalali),
-                                      _divider(),
-                                      _subtitleWithFittedBox(
-                                        purchaseModel.pakkiRakam,
+                                      const DividerForTable(),
+                                      SubtitleForTable(
+                                        text: purchaseModel.unit,
+                                        fontSize: _fontSize,
+                                      ),
+                                      const DividerForTable(),
+                                      SubtitleWithFittedBox(
+                                        fontSize: _fontSize,
+                                        text: purchaseModel.rate,
+                                      ),
+                                      const DividerForTable(),
+                                      SubtitleWithFittedBox(
+                                        fontSize: _fontSize,
+                                        text: purchaseModel.kacchiRakam,
+                                      ),
+                                      const DividerForTable(),
+                                      SubtitleWithFittedBox(
+                                        fontSize: _fontSize,
+                                        text: purchaseModel.discount,
+                                      ),
+                                      const DividerForTable(),
+                                      SubtitleWithFittedBox(
+                                        fontSize: _fontSize,
+                                        text: purchaseModel.dalali,
+                                      ),
+                                      const DividerForTable(),
+                                      SubtitleWithFittedBox(
+                                        fontSize: _fontSize,
+                                        text: purchaseModel.pakkiRakam,
                                       ),
                                     ],
                                   ),
@@ -162,7 +218,7 @@ class _PurchaseBookTableState extends State<PurchaseBookTable> {
                     ),
                   ),
                 ),
-                _draggableScrollableSheet(),
+                _DraggableScrollableSheet(sagaBookBloc: _sagaBookBloc),
               ],
             );
           }
@@ -172,19 +228,79 @@ class _PurchaseBookTableState extends State<PurchaseBookTable> {
     );
   }
 
-  Center _errorWidget() {
-    return Center(
-      child: Text("Something went wrong"),
+  AppBar _appbar() {
+    return AppBarCustom(context).appbar(
+      title: "Purchase Book",
+      actions: [
+        IconButton(
+          onPressed: () {
+            PurchaseBookSQLResources().getEntries();
+          },
+          icon: Icon(
+            Icons.search,
+          ),
+        ),
+        _addTransactionButton(),
+      ],
     );
   }
 
-  Widget _noData() {
-    return Center(
-      child: Text("No Data"),
+  TextButton _addTransactionButton() {
+    return TextButton(
+      onPressed: () {
+        Push(
+          context,
+          pushTo: AddEntryInPurchasebook(
+            sagaBookBloc: _sagaBookBloc,
+          ),
+        );
+      },
+      child: RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: "Add",
+              style: GoogleFonts.raleway(
+                color: BLACK,
+                fontWeight: FontWeight.w600,
+                fontSize: 12.sp,
+              ),
+            ),
+            TextSpan(text: " "),
+            WidgetSpan(
+              child: Transform.translate(
+                offset: const Offset(-2.0, -5.0),
+                child: Text(
+                  "+",
+                  style: TextStyle(
+                    fontSize: 17.sp,
+                    color: BLACK,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  DraggableScrollableSheet _draggableScrollableSheet() {
+  double _fontSize = 13;
+}
+
+// ---------------- Dragable Scrollable Sheet ---------------------
+
+class _DraggableScrollableSheet extends StatelessWidget {
+  const _DraggableScrollableSheet({
+    Key? key,
+    required SagaBookBloc sagaBookBloc,
+  })  : _sagaBookBloc = sagaBookBloc,
+        super(key: key);
+
+  final SagaBookBloc _sagaBookBloc;
+
+  @override
+  Widget build(BuildContext context) {
     return DraggableScrollableSheet(
       maxChildSize: 0.3,
       // initialChildSize: 0.2,
@@ -196,7 +312,7 @@ class _PurchaseBookTableState extends State<PurchaseBookTable> {
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
           ),
-          color: YELLOW700,
+          color: CYAN900,
         ),
         child: ListView(
           controller: cntrl,
@@ -280,179 +396,6 @@ class _PurchaseBookTableState extends State<PurchaseBookTable> {
               ),
             )
           ],
-        ),
-      ),
-    );
-  }
-
-  Text _emptyText() {
-    return Text(
-      "",
-      style: TextStyle(
-        fontSize: 11,
-      ),
-    );
-  }
-
-  InkWell _editViewButton(BuildContext context, {required String docId}) {
-    return InkWell(
-      onTap: () {},
-      child: FittedBox(
-        child: Container(
-          alignment: Alignment.center,
-          width: 25.w,
-          // color: Colors.red,
-          child: Text(
-            "Edit/View",
-            style: TextStyle(
-              fontSize: 10,
-              color: Colors.blue,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  AppBar _appbar() {
-    return AppBar(
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios_sharp),
-        onPressed: () {
-          Pop(context);
-        },
-      ),
-      title: Text("Purchase Book"),
-      centerTitle: false,
-      actions: [
-        IconButton(
-          onPressed: () {
-            PurchaseBookSQLResources().getEntries();
-          },
-          icon: Icon(
-            Icons.search,
-          ),
-        ),
-        _addTransactionButton(),
-      ],
-    );
-  }
-
-  TextButton _addTransactionButton() {
-    return TextButton(
-      onPressed: () {
-        Push(
-          context,
-          pushTo: AddEntryInPurchasebook(
-            sagaBookBloc: _sagaBookBloc,
-          ),
-        );
-      },
-      child: RichText(
-        text: TextSpan(
-          children: [
-            TextSpan(
-              text: "Add",
-              style: GoogleFonts.raleway(
-                color: BLACK,
-                fontWeight: FontWeight.w600,
-                fontSize: 12.sp,
-              ),
-            ),
-            TextSpan(text: " "),
-            WidgetSpan(
-              child: Transform.translate(
-                offset: const Offset(-2.0, -5.0),
-                child: Text(
-                  "+",
-                  style: TextStyle(
-                    fontSize: 17.sp,
-                    color: BLACK,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  BoxDecoration _boxDecorationForTitle() {
-    return BoxDecoration(
-      color: YELLOW700,
-      borderRadius: BorderRadius.only(
-        topRight: Radius.circular(20),
-        bottomRight: Radius.circular(20),
-      ),
-    );
-  }
-
-  double _fontSize = 13;
-
-  Expanded _titleWithFittedBox(String text) {
-    return Expanded(
-      child: Center(
-        child: FittedBox(
-          child: Text(
-            text,
-            style: GoogleFonts.raleway(
-              fontWeight: FontWeight.w800,
-              fontSize: _fontSize,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Expanded _subtitle(String text) {
-    return Expanded(
-      child: Center(
-        child: Container(
-          alignment: Alignment.center,
-          child: Text(
-            text,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: _fontSize,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Expanded _subtitleWithFittedBox(String text) {
-    return Expanded(
-      child: Center(
-        child: FittedBox(
-          child: Text(
-            text,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: _fontSize,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Divider _divider() => Divider(thickness: 1);
-
-  Expanded _title(String text) {
-    return Expanded(
-      child: Center(
-        child: Text(
-          text,
-          style: GoogleFonts.raleway(
-            fontSize: _fontSize,
-            fontWeight: FontWeight.w800,
-          ),
         ),
       ),
     );

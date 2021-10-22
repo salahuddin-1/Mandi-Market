@@ -7,7 +7,10 @@ import 'package:mandimarket/src/models/calc_para_model.dart';
 import 'package:mandimarket/src/resources/format_date.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/ui/administrator/Calculation_parameter/add_parameter.dart';
+import 'package:mandimarket/src/widgets/app_bar.dart';
 import 'package:mandimarket/src/widgets/circular_progress.dart';
+import 'package:mandimarket/src/widgets/empty_text.dart';
+import 'package:mandimarket/src/widgets/table_widgets.dart';
 import 'package:sizer/sizer.dart';
 
 class SetParameter extends StatefulWidget {
@@ -52,27 +55,29 @@ class _SetParameterState extends State<SetParameter> {
                 child: Row(
                   children: [
                     Container(
-                      decoration: _boxDecorationForTitle(),
+                      decoration: BoxDecorationFor.title(),
                       width: 23.w,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          _emptyText(),
-                          _title("Sr. no"),
-                          _divider(),
-                          _titleWithFittedBox("From"),
-                          _divider(),
-                          _title("To"),
-                          _divider(),
-                          _titleWithFittedBox("Discount (%)"),
-                          _divider(),
-                          _titleWithFittedBox("Commission"),
-                          _divider(),
-                          _titleWithFittedBox("Commision\nRe. 1 / unit"),
-                          _divider(),
-                          _titleWithFittedBox("Karkuni"),
-                          _divider(),
-                          _title("Remark"),
+                          const EmptyText(),
+                          const TitleTable(text: "Sr. no"),
+                          const DividerForTable(),
+                          const TitleWithFittedBox(text: "From"),
+                          const DividerForTable(),
+                          const TitleTable(text: "To"),
+                          const DividerForTable(),
+                          const TitleWithFittedBox(text: "Discount (%)"),
+                          const DividerForTable(),
+                          const TitleWithFittedBox(text: "Commission"),
+                          const DividerForTable(),
+                          const TitleWithFittedBox(
+                            text: "Commision\nRe. 1 / unit",
+                          ),
+                          const DividerForTable(),
+                          const TitleWithFittedBox(text: "Karkuni"),
+                          const DividerForTable(),
+                          const TitleTable(text: "Remark"),
                         ],
                       ),
                     ),
@@ -96,35 +101,44 @@ class _SetParameterState extends State<SetParameter> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  _editViewButton(
-                                    context,
-                                    docId: "${calcParaModel.documentId}",
+                                  EditViewButton(
+                                    onPressed: () {},
                                   ),
-                                  _subtitle(
-                                    '${calcParaModelList.length - index}',
+                                  SubtitleForTable(
+                                    text: '${calcParaModelList.length - index}',
                                   ),
-                                  _divider(),
-                                  _subtitle(
-                                    formatDateShort(
+                                  const DividerForTable(),
+                                  SubtitleForTable(
+                                    text: formatDateShort(
                                       DateTime.tryParse(calcParaModel.fromDate),
                                     ),
                                   ),
-                                  _divider(),
-                                  _subtitle(
-                                    formatDateShort(
+                                  const DividerForTable(),
+                                  SubtitleForTable(
+                                    text: formatDateShort(
                                       DateTime.tryParse(calcParaModel.toDate),
                                     ),
                                   ),
-                                  _divider(),
-                                  _subtitle(calcParaModel.discount),
-                                  _divider(),
-                                  _subtitle(calcParaModel.commission),
-                                  _divider(),
-                                  _subtitle(calcParaModel.commissionRe1),
-                                  _divider(),
-                                  _subtitle(calcParaModel.karkuni),
-                                  _divider(),
-                                  _subtitle(calcParaModel.remark),
+                                  const DividerForTable(),
+                                  SubtitleForTable(
+                                    text: calcParaModel.discount,
+                                  ),
+                                  const DividerForTable(),
+                                  SubtitleForTable(
+                                    text: calcParaModel.commission,
+                                  ),
+                                  const DividerForTable(),
+                                  SubtitleForTable(
+                                    text: calcParaModel.commissionRe1,
+                                  ),
+                                  const DividerForTable(),
+                                  SubtitleForTable(
+                                    text: calcParaModel.karkuni,
+                                  ),
+                                  const DividerForTable(),
+                                  SubtitleForTable(
+                                    text: calcParaModel.remark,
+                                  ),
                                 ],
                               ),
                             );
@@ -143,126 +157,9 @@ class _SetParameterState extends State<SetParameter> {
     );
   }
 
-  Text _emptyText() {
-    return Text(
-      "",
-      style: TextStyle(
-        fontSize: 11,
-      ),
-    );
-  }
-
-  BoxDecoration _boxDecorationForTitle() {
-    return BoxDecoration(
-      color: Colors.cyan[900],
-      borderRadius: BorderRadius.only(
-        topRight: Radius.circular(20),
-        bottomRight: Radius.circular(20),
-      ),
-    );
-  }
-
-  Expanded _titleWithFittedBox(String text) {
-    return Expanded(
-      child: Center(
-        child: FittedBox(
-          child: Text(
-            text,
-            style: GoogleFonts.raleway(
-              fontWeight: FontWeight.w500,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Expanded _subtitle(String text) {
-    return Expanded(
-      child: Center(
-        child: Container(
-          alignment: Alignment.center,
-          child: Text(
-            text,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  InkWell _editViewButton(BuildContext context, {required String docId}) {
-    return InkWell(
-      onTap: () {
-        // Push(
-        //   context,
-        //   pushTo: EditMaster(
-        //     type: widget.type,
-        //     docId: docId,
-        //     masterPaginationBloc: masterPagination,
-        //   ),
-        // );
-      },
-      child: FittedBox(
-        child: Container(
-          alignment: Alignment.center,
-          width: 25.w,
-          child: Text(
-            "Edit/View",
-            style: TextStyle(
-              fontSize: 11,
-              color: Colors.blue,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Divider _divider() => Divider(thickness: 1);
-
-  Expanded _title(String text) {
-    return Expanded(
-      child: Center(
-        child: Text(
-          text,
-          style: GoogleFonts.raleway(
-            fontWeight: FontWeight.w500,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
-  }
-
   AppBar _appbar() {
-    return AppBar(
-      backgroundColor: Colors.cyan[900],
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(40),
-        ),
-      ),
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios_sharp),
-        iconSize: 15.sp,
-        onPressed: () {
-          Pop(context);
-        },
-      ),
-      title: Text(
-        "Parameter Data",
-        style: TextStyle(
-          color: Colors.white,
-        ),
-      ),
-      centerTitle: false,
+    return AppBarCustom(context).appbar(
+      title: "Parameter Data",
       actions: [
         IconButton(
           onPressed: () {},

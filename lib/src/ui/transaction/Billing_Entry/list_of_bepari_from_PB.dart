@@ -1,61 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:mandimarket/src/blocs/Transaction_BLOC/purchase_book_get_user_bloc.dart';
-import 'package:mandimarket/src/blocs/master_list_pagination.dart';
-import 'package:mandimarket/src/blocs/show_circular_progress_bloc.dart';
-import 'package:mandimarket/src/models/master_model.dart';
+import 'package:mandimarket/src/blocs/Transaction_BLOC/billing_entry_BLOC.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/ui/transaction/purchase_book/search.dart';
 import 'package:mandimarket/src/widgets/app_bar.dart';
 import 'package:mandimarket/src/widgets/circular_progress.dart';
 import 'package:sizer/sizer.dart';
 
-class PartyListFromMaster extends StatefulWidget {
-  final String type;
-  final PurchaseBookGetUserBLOC purchaseBookGetUserBLOC;
+class ListOfBepariFromPB extends StatefulWidget {
+  final DateTime date;
 
-  PartyListFromMaster({
-    required this.type,
-    required this.purchaseBookGetUserBLOC,
-  });
+  const ListOfBepariFromPB({Key? key, required this.date}) : super(key: key);
 
   @override
-  _PartyListFromMasterState createState() => _PartyListFromMasterState();
+  _ListOfBepariFromPBState createState() => _ListOfBepariFromPBState();
 }
 
-class _PartyListFromMasterState extends State<PartyListFromMaster> {
-  late final MasterPaginationBloc _masterPaginateBLOC;
-  late final ScrollController _scrollController;
-  late final ShowCircularProgressBloc _showCircularProgressBloc;
+class _ListOfBepariFromPBState extends State<ListOfBepariFromPB> {
+  late final GetParametersForBillingEntry _getParametersForBillingEntry;
 
   @override
   void initState() {
-    _masterPaginateBLOC = new MasterPaginationBloc(type: widget.type);
-    _masterPaginateBLOC.getUsers(docLimit: 9);
-    _scrollController = new ScrollController();
-    _showCircularProgressBloc = new ShowCircularProgressBloc();
-    _addListenerToScroll();
+    _getParametersForBillingEntry = new GetParametersForBillingEntry(
+      widget.date,
+    );
+
     super.initState();
   }
 
   @override
   void dispose() {
-    _masterPaginateBLOC.dispose();
-    _scrollController.dispose();
-    _showCircularProgressBloc.dispose();
+    _getParametersForBillingEntry.dispose();
     super.dispose();
-  }
-
-  _addListenerToScroll() {
-    _scrollController.addListener(
-      () {
-        double maxScroll = _scrollController.position.maxScrollExtent;
-        double currentScroll = _scrollController.position.pixels;
-
-        if (maxScroll - currentScroll < 25.h) {
-          _masterPaginateBLOC.getUsers(docLimit: 3);
-        }
-      },
-    );
   }
 
   @override
@@ -68,7 +43,7 @@ class _PartyListFromMasterState extends State<PartyListFromMaster> {
 
   AppBar _appbar() {
     return AppBarCustom(context).appbar(
-      title: widget.type,
+      title: 'Bepari',
       actions: [
         IconButton(
           tooltip: 'Search',
@@ -101,30 +76,32 @@ class _PartyListFromMasterState extends State<PartyListFromMaster> {
   }
 
   Widget _parties() {
-    return StreamBuilder<List<MasterModel>>(
-      stream: _masterPaginateBLOC.streamMasterModel,
+    return StreamBuilder<List<Map<String, dynamic>>>(
+      stream: _getParametersForBillingEntry.stream,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return _errorWidget();
         } else if (snapshot.hasData) {
+          final list = snapshot.data;
+
+          if (list == null) {
+            return _noData();
+          }
+
           return Expanded(
             child: ListView.builder(
-              controller: _scrollController,
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
-                final mastermodel = snapshot.data![index];
+                final params = list[index];
+
                 return Column(
                   children: [
                     ListTile(
                       onTap: () {
-                        widget.purchaseBookGetUserBLOC.updateTextFields(
-                          val: mastermodel.partyName,
-                          type: widget.type,
-                        );
-                        Pop(context);
+                        Navigator.pop(context, params);
                       },
                       title: Text(
-                        mastermodel.partyName,
+                        params['bepariName'],
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       leading: Text(
@@ -153,19 +130,20 @@ class _PartyListFromMasterState extends State<PartyListFromMaster> {
     );
   }
 
-  // Expanded _noData() {
-  //   return Expanded(
-  //     child: Center(
-  //       child: Text("No Data"),
-  //     ),
-  //   );
-  // }
+  Expanded _noData() {
+    return Expanded(
+      child: Center(
+        child: Text("No Data"),
+      ),
+    );
+  }
 
   Text _note() {
     return Text(
-      '''Note : Only the parties that were added in Master/${widget.type} will appear here.''',
+      '''Note : Only the calculations that were done in Purchase book with respective Bepari Name will appear here.''',
       style: TextStyle(
         fontWeight: FontWeight.bold,
+        letterSpacing: 0.6,
       ),
     );
   }

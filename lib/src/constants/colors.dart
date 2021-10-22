@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
-// const YELLOW700 = Color(0xFF006064);
-const YELLOW700 = Color(0xFFFBC02D);
+const BLACK = const Color(0xff000000);
 
-const BLACK = Colors.black;
+const BROWN = const Color(0xff3e2723);
 
-const BROWN = Color(0xff3e2723);
+const CYAN900 = const Color(0xff006064);
 
-const WHITE = Colors.white;
+const WHITE = const Color(0xffffffff);

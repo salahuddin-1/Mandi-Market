@@ -8,8 +8,10 @@ import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/ui/Master1/add_party.dart';
 import 'package:mandimarket/src/ui/Master1/edit_party.dart';
 import 'package:mandimarket/src/ui/Master1/master_model.dart';
+import 'package:mandimarket/src/widgets/app_bar.dart';
 import 'package:mandimarket/src/widgets/circular_progress.dart';
 import 'package:mandimarket/src/widgets/empty_text.dart';
+import 'package:mandimarket/src/widgets/table_widgets.dart';
 import 'package:sizer/sizer.dart';
 
 class MasterTable extends StatefulWidget {
@@ -50,12 +52,12 @@ class _MasterTableState extends State<MasterTable> {
         stream: _feedEntriesToMasterBLOC.stream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return _errorWidget();
+            return const ErrorText();
           } else if (snapshot.hasData) {
             var masterModelList = snapshot.data;
 
             if (masterModelList!.length == 0) {
-              return _noData();
+              return const NoData();
             }
             return Center(
               child: Container(
@@ -63,22 +65,22 @@ class _MasterTableState extends State<MasterTable> {
                 child: Row(
                   children: [
                     Container(
-                      decoration: _boxDecorationForTitle(),
+                      decoration: BoxDecorationFor.title(),
                       height: 73.h,
                       width: 23.w,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           const EmptyText(),
-                          _titleWithFittedBox("Party name"),
-                          _divider(),
-                          _title("Address"),
-                          _divider(),
-                          _title("Phone no"),
-                          _divider(),
-                          _titleWithFittedBox("Opening \n balance"),
-                          _divider(),
-                          _title("Remark"),
+                          const TitleWithFittedBox(text: "Party name"),
+                          const DividerForTable(),
+                          const TitleTable(text: "Address"),
+                          const DividerForTable(),
+                          const TitleTable(text: "Phone no"),
+                          const DividerForTable(),
+                          const TitleWithFittedBox(text: "Opening \n balance"),
+                          const DividerForTable(),
+                          const TitleTable(text: "Remark"),
                         ],
                       ),
                     ),
@@ -97,26 +99,31 @@ class _MasterTableState extends State<MasterTable> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  _editViewButton(
-                                    context,
-                                    docId: masterModel.documentId.toString(),
+                                  EditViewButton(
+                                    onPressed: () {
+                                      _edit(
+                                        docId:
+                                            masterModel.documentId.toString(),
+                                      );
+                                    },
                                   ),
-                                  _subtitle(
-                                    masterModel.partyName,
+                                  SubtitleForTable(
+                                    text: masterModel.partyName,
                                   ),
-                                  _divider(),
-                                  _subtitle(
-                                    masterModel.address,
+                                  const DividerForTable(),
+                                  SubtitleForTable(
+                                    text: masterModel.address,
                                   ),
-                                  _divider(),
-                                  _subtitle(masterModel.phoneNumber),
-                                  _divider(),
+                                  const DividerForTable(),
+                                  SubtitleForTable(
+                                      text: masterModel.phoneNumber),
+                                  const DividerForTable(),
                                   _openingBalWithFittedBox(
                                     masterModel.openingBalance.toString(),
                                     masterModel.debitOrCredit,
                                   ),
-                                  _divider(),
-                                  _subtitle(masterModel.remark),
+                                  const DividerForTable(),
+                                  SubtitleForTable(text: masterModel.remark),
                                 ],
                               ),
                             );
@@ -135,15 +142,13 @@ class _MasterTableState extends State<MasterTable> {
     );
   }
 
-  Center _errorWidget() {
-    return Center(
-      child: Text("Something went wrong"),
-    );
-  }
-
-  Widget _noData() {
-    return Center(
-      child: Text("No Data"),
+  void _edit({required String docId}) {
+    Push(
+      context,
+      pushTo: EditPartiesInMaster(
+        docId: docId,
+        type: this.type,
+      ),
     );
   }
 
@@ -188,93 +193,6 @@ class _MasterTableState extends State<MasterTable> {
     );
   }
 
-  BoxDecoration _boxDecorationForTitle() {
-    return BoxDecoration(
-      color: YELLOW700,
-      borderRadius: BorderRadius.only(
-        topRight: Radius.circular(20),
-        bottomRight: Radius.circular(20),
-      ),
-    );
-  }
-
-  Expanded _titleWithFittedBox(String text) {
-    return Expanded(
-      child: Center(
-        child: FittedBox(
-          child: Text(
-            text,
-            style: GoogleFonts.raleway(
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Expanded _subtitle(String text) {
-    return Expanded(
-      child: Center(
-        child: Container(
-          alignment: Alignment.center,
-          child: Text(
-            text,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  InkWell _editViewButton(BuildContext context, {required String docId}) {
-    return InkWell(
-      onTap: () {
-        Push(
-          context,
-          pushTo: EditPartiesInMaster(
-            docId: docId,
-            type: this.type,
-          ),
-        );
-      },
-      child: FittedBox(
-        child: Container(
-          alignment: Alignment.center,
-          width: 25.w,
-          // color: Colors.red,
-          child: Text(
-            "Edit/View",
-            style: TextStyle(
-              fontSize: 11,
-              color: Colors.blue,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Divider _divider() => Divider(thickness: 1);
-
-  Expanded _title(String text) {
-    return Expanded(
-      child: Center(
-        child: Text(
-          text,
-          style: GoogleFonts.raleway(
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-      ),
-    );
-  }
-
   FloatingActionButton _floatingActionButton(BuildContext context) {
     return FloatingActionButton(
       onPressed: () {
@@ -290,23 +208,8 @@ class _MasterTableState extends State<MasterTable> {
   }
 
   AppBar _appbar(context) {
-    return AppBar(
-      elevation: 10,
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios_sharp),
-        onPressed: () {
-          Pop(context);
-        },
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(10),
-          bottomRight: Radius.circular(10),
-        ),
-      ),
-      title: Text(
-        '${widget.type} table',
-      ),
+    return AppBarCustom(context).appbar(
+      title: '${widget.type} table',
       actions: [
         IconButton(
           onPressed: () {},
@@ -315,7 +218,6 @@ class _MasterTableState extends State<MasterTable> {
           ),
         ),
       ],
-      centerTitle: true,
     );
   }
 }

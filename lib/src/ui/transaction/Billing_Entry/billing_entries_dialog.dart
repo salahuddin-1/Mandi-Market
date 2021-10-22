@@ -1,27 +1,26 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mandimarket/src/blocs/select_date_bloc.dart';
 import 'package:mandimarket/src/resources/format_date.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
+import 'package:mandimarket/src/ui/transaction/Billing_Entry/select_dates_screen.dart';
 import 'package:mandimarket/src/ui/transaction/Billing_Entry/table_billing_entry.dart';
-import 'package:mandimarket/src/widgets/select_date.dart';
 import 'package:sizer/sizer.dart';
 
 class BillingEntryDialog {
-  late final _fromDateContrl = new TextEditingController(
-    text: formatDate(
-      DateTime.now(),
-    ),
-  );
+  late final _fromDateContrl = new TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  late DateTime selectedDate;
 
-  late final _selectDateBloc = new SelectDateBloc();
+  void dispose() {
+    _fromDateContrl.dispose();
+  }
 
   // DIALOG
   selectDate(BuildContext _context) {
     return showDialog(
       context: _context,
       builder: (newContext) => AlertDialog(
-        // title: Text('Select Date'),
+        title: Text('Select Date'),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -40,14 +39,16 @@ class BillingEntryDialog {
           ),
           TextButton(
             onPressed: () {
-              Pop(newContext);
+              if (_formKey.currentState!.validate()) {
+                Pop(newContext);
 
-              Push(
-                _context,
-                pushTo: BillingEntryTable(
-                  date: _selectDateBloc.fromDateValue!,
-                ),
-              );
+                Push(
+                  _context,
+                  pushTo: BillingEntryTable(
+                    date: selectedDate,
+                  ),
+                );
+              }
             },
             child: Text("OK"),
           ),
@@ -62,44 +63,45 @@ class BillingEntryDialog {
       children: [
         Text("Mandi date : "),
         Expanded(
-          child: StreamBuilder<DateTime?>(
-            stream: _selectDateBloc.streamFromDate,
-            builder: (context, snapshot) {
-              return Container(
-                margin: EdgeInsets.symmetric(horizontal: 2.w),
-                width: 40.w,
-                child: TextFormField(
-                  controller: _fromDateContrl,
-                  readOnly: true,
-                  onTap: () async {
-                    await _onTapFromDate(newContext, snapshot);
-                  },
-                ),
-              );
-            },
+          child: Form(
+            key: _formKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 2.w),
+              width: 40.w,
+              child: TextFormField(
+                controller: _fromDateContrl,
+                validator: (val) {
+                  if (val!.isEmpty) {
+                    return "Mandi date cannot be empty";
+                  }
+                },
+                readOnly: true,
+                onTap: () async {
+                  await _gotoDates(newContext);
+                },
+              ),
+            ),
           ),
         ),
       ],
     );
   }
 
-  Future<void> _onTapFromDate(
-    BuildContext newContext,
-    AsyncSnapshot<DateTime?> snapshot,
-  ) async {
-    var date = await showDate(
-      newContext,
-      title: 'Select',
-      selectedDate: snapshot.data!,
+  Future<void> _gotoDates(BuildContext context) async {
+    final String? result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SelectDates(),
+      ),
     );
-    _selectDateBloc.selectFromDate(date!);
-    var pickedDate = formatDate(date);
 
-    _fromDateContrl.text = pickedDate;
-  }
+    if (result != null) {
+      final date = formatDate(DateTime.tryParse(result));
 
-  void dispose() {
-    _selectDateBloc.dispose();
-    _fromDateContrl.dispose();
+      _fromDateContrl.text = date;
+
+      selectedDate = DateTime.tryParse(result)!;
+    }
   }
 }

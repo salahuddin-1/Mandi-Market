@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:mandimarket/src/constants/colors.dart';
+
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/widgets/app_bar.dart';
 
-import 'add_parameter.dart';
 import 'package:sizer/sizer.dart';
 
 import 'table_parameter.dart';

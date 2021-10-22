@@ -5,6 +5,7 @@ import 'package:mandimarket/src/blocs/show_circular_progress_bloc.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/ui/Master1/master_model.dart';
 import 'package:mandimarket/src/ui/transaction/purchase_book/search.dart';
+import 'package:mandimarket/src/widgets/app_bar.dart';
 import 'package:mandimarket/src/widgets/circular_progress.dart';
 import 'package:sizer/sizer.dart';
 
@@ -50,17 +51,8 @@ class _PartyListFromMasterLocalState extends State<PartyListFromMasterLocal> {
   }
 
   AppBar _appbar() {
-    return AppBar(
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios_sharp),
-        onPressed: () {
-          Pop(context);
-        },
-      ),
-      title: Text(
-        widget.type,
-      ),
-      centerTitle: true,
+    return AppBarCustom(context).appbar(
+      title: widget.type,
       actions: [
         IconButton(
           tooltip: 'Search',

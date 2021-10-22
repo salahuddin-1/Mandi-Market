@@ -1,16 +1,4 @@
 import 'package:get/get.dart';
-import 'package:mandimarket/src/database/SQFLite/Adminstrator/sql_resources_calc_para.dart';
-import 'package:rxdart/rxdart.dart';
-
-class GetDiscountAndCommissionRe1BLOC {
-  final _discountStreamCntrl = BehaviorSubject<String>();
-  final _commissionRe1StreamCntrl = BehaviorSubject<String>();
-
-  void dispose() {
-    _discountStreamCntrl.close();
-    _commissionRe1StreamCntrl.close();
-  }
-}
 
 class GetXDiscountAndCommissionRe extends GetxController {
   double? _discount;

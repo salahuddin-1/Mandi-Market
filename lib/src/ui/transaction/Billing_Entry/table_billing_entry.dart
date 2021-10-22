@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mandimarket/src/blocs/Transaction_BLOC/billing_entry_table_BLOC.dart';
-import 'package:mandimarket/src/models/purchase_book_model.dart';
+import 'package:mandimarket/src/models/billing_entry_model.dart';
+import 'package:mandimarket/src/resources/format_date.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/widgets/app_bar.dart';
 import 'package:mandimarket/src/widgets/circular_progress.dart';
@@ -26,7 +27,9 @@ class _BillingEntryTableState extends State<BillingEntryTable> {
 
   @override
   void initState() {
-    _billingEntryTableBLOC = new BillingEntryTableBLOC(widget.date);
+    _billingEntryTableBLOC = new BillingEntryTableBLOC(
+      widget.date,
+    );
     super.initState();
   }
 
@@ -71,7 +74,7 @@ class _BillingEntryTableState extends State<BillingEntryTable> {
                 child: Container(
                   height: 73.h,
                   margin: EdgeInsets.symmetric(horizontal: 1.w),
-                  child: StreamBuilder<List<PurchaseBookModel>>(
+                  child: StreamBuilder<List<BillingEntryModel>>(
                     stream: _billingEntryTableBLOC.stream,
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
@@ -87,7 +90,8 @@ class _BillingEntryTableState extends State<BillingEntryTable> {
                           scrollDirection: Axis.horizontal,
                           itemCount: list.length,
                           itemBuilder: (context, index) {
-                            final purchaseModel = list[index];
+                            final billingEntryModel = list[index];
+
                             return Container(
                               margin: EdgeInsets.symmetric(horizontal: 0.5.w),
                               width: 25.w,
@@ -100,20 +104,27 @@ class _BillingEntryTableState extends State<BillingEntryTable> {
                                   SubtitleForTable(text: "${index + 1}"),
                                   const DividerForTable(),
                                   SubtitleForTable(
-                                    text: purchaseModel.selectedTimestamp,
+                                    text: formatDateShort(
+                                      DateTime.tryParse(
+                                        billingEntryModel.selectedTimestamp,
+                                      ),
+                                    ),
                                   ),
                                   const DividerForTable(),
                                   SubtitleForTable(
-                                    text: purchaseModel.bepariName,
+                                    text: billingEntryModel.bepariName,
                                   ),
-                                  const DividerForTable(),
-                                  SubtitleForTable(text: purchaseModel.unit),
                                   const DividerForTable(),
                                   SubtitleForTable(
-                                    text: purchaseModel.kacchiRakam,
+                                      text: billingEntryModel.unit),
+                                  const DividerForTable(),
+                                  SubtitleForTable(
+                                    text: billingEntryModel.subAmount,
                                   ),
                                   const DividerForTable(),
-                                  const SubtitleForTable(text: '100000000'),
+                                  SubtitleForTable(
+                                    text: billingEntryModel.netAmount,
+                                  ),
                                 ],
                               ),
                             );
@@ -139,7 +150,10 @@ class _BillingEntryTableState extends State<BillingEntryTable> {
       onPressedAdd: () {
         Push(
           context,
-          pushTo: AddEntryInBillingEntry(),
+          pushTo: AddEntryInBillingEntry(
+            date: widget.date,
+            billingEntryTableBLOC: _billingEntryTableBLOC,
+          ),
         );
       },
       actions: [],

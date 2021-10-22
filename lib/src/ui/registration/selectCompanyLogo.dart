@@ -67,7 +67,7 @@ class _SelectCompanyLogoState extends State<SelectCompanyLogo> {
         ),
       ),
       decoration: BoxDecoration(
-        color: YELLOW700,
+        color: CYAN900,
         borderRadius: BorderRadius.circular(10),
       ),
     );
@@ -124,7 +124,7 @@ class _SelectCompanyLogoState extends State<SelectCompanyLogo> {
         widget.logoBloc.selectFromGallery();
       },
       minWidth: 50.w,
-      color: YELLOW700,
+      color: CYAN900,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
@@ -159,7 +159,7 @@ class _SelectCompanyLogoState extends State<SelectCompanyLogo> {
           },
           icon: Icon(
             Icons.check,
-            color: YELLOW700,
+            color: CYAN900,
           ),
         ),
       ],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mandimarket/src/constants/colors.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
+import 'package:mandimarket/src/widgets/main_widgets.dart';
 import 'package:sizer/sizer.dart';
 import 'Calculation_parameter/table_parameter.dart';
 import 'Opening_balance/enter_opening_balance.dart';
@@ -28,62 +28,26 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appbar(),
+      appBar: appbarMain(),
       body: Container(
-        padding: EdgeInsets.only(top: 3.h, bottom: 15.h),
+        padding: EdgeInsets.only(top: 2.h, bottom: 15.h),
         child: Column(
           children: [
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 2.h),
-                child: Row(
-                  children: [
-                    _LeftChild(
-                      title: "Calculation Parameter",
-                      onTap: () {
-                        onTapAdministrator(context);
-                      },
-                    ),
-                    _RightChild(
-                      title: "Opening Balance",
-                      onTap: () {
-                        onTapOpeningBal();
-                      },
-                    ),
-                  ],
-                ),
-              ),
+            MainTitleBox(
+              title: "Calculation Parameter",
+              onPressed: onTapAdministrator,
             ),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 2.h),
-                child: Row(
-                  children: [
-                    _LeftChild(
-                      title: "Partnership Amount",
-                      onTap: () {
-                        // onTapAdministrator(context);
-                      },
-                    ),
-                    _RightChild(
-                      title: "KYC (Customer Rating)",
-                      onTap: () {
-                        // onTapAdministrator(context);
-                      },
-                    ),
-                  ],
-                ),
-              ),
+            MainTitleBox(
+              title: "Opening Balance",
+              onPressed: onTapOpeningBal,
             ),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 2.h),
-                child: Row(
-                  children: [
-                    const Text(''),
-                  ],
-                ),
-              ),
+            MainTitleBox(
+              title: "Partnership Amount",
+              onPressed: () {},
+            ),
+            MainTitleBox(
+              title: "KYC (Customer Rating)",
+              onPressed: () {},
             ),
           ],
         ),
@@ -91,118 +55,16 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
     );
   }
 
-  onTapAdministrator(BuildContext context) {
+// ------------------------------ EVENTS ------------------------------------------
+
+  void onTapAdministrator() {
     Push(
       context,
       pushTo: SetParameter(),
     );
   }
 
-  onTapOpeningBal() {
+  void onTapOpeningBal() {
     _enterOpeningBalance.showdialog();
-  }
-
-  AppBar _appbar() {
-    return AppBar(
-      title: Text(
-        'Mandi Market',
-      ),
-      backgroundColor: Colors.white,
-      elevation: 0,
-    );
-  }
-}
-
-class _LeftChild extends StatelessWidget {
-  final String title;
-  final Function onTap;
-
-  const _LeftChild({
-    Key? key,
-    required this.title,
-    required this.onTap,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              offset: Offset(4, 4),
-              blurRadius: 12,
-              spreadRadius: -8,
-            ),
-          ],
-        ),
-        // height: 14.h,
-        margin: EdgeInsets.only(left: 3.w, right: 1.5.w),
-        child: Material(
-          color: YELLOW700,
-          borderRadius: BorderRadius.circular(10),
-          child: InkWell(
-            onTap: () {
-              onTap();
-            },
-            child: Ink(
-              child: Center(
-                child: Text(
-                  title,
-                  textScaleFactor: 0.81.sp,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _RightChild extends StatelessWidget {
-  final String title;
-  final Function onTap;
-
-  const _RightChild({
-    Key? key,
-    required this.title,
-    required this.onTap,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              offset: Offset(4, 4),
-              blurRadius: 12,
-              spreadRadius: -8,
-            ),
-          ],
-        ),
-        // height: 14.h,
-        margin: EdgeInsets.only(left: 1.5.w, right: 3.w),
-        child: Material(
-          color: YELLOW700,
-          borderRadius: BorderRadius.circular(10),
-          child: InkWell(
-            onTap: () {
-              onTap();
-            },
-            child: Ink(
-              child: Center(
-                child: Text(
-                  this.title,
-                  textScaleFactor: 0.81.sp,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }

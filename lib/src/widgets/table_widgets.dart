@@ -5,9 +5,11 @@ import 'package:sizer/sizer.dart';
 
 class TitleTable extends StatelessWidget {
   final String text;
+  final double? fontSize;
   const TitleTable({
     Key? key,
     required this.text,
+    this.fontSize,
   }) : super(key: key);
 
   @override
@@ -18,6 +20,7 @@ class TitleTable extends StatelessWidget {
           text,
           style: GoogleFonts.raleway(
             fontWeight: FontWeight.w600,
+            fontSize: fontSize,
             color: WHITE,
           ),
         ),
@@ -28,9 +31,11 @@ class TitleTable extends StatelessWidget {
 
 class TitleWithFittedBox extends StatelessWidget {
   final String text;
+  final double? fontSize;
   const TitleWithFittedBox({
     Key? key,
     required this.text,
+    this.fontSize,
   }) : super(key: key);
 
   @override
@@ -43,6 +48,7 @@ class TitleWithFittedBox extends StatelessWidget {
             style: GoogleFonts.raleway(
               fontWeight: FontWeight.w600,
               color: WHITE,
+              fontSize: fontSize,
             ),
           ),
         ),
@@ -51,20 +57,42 @@ class TitleWithFittedBox extends StatelessWidget {
   }
 }
 
-class DividerForTable extends StatelessWidget {
-  const DividerForTable({Key? key}) : super(key: key);
+class SubtitleWithFittedBox extends StatelessWidget {
+  final String text;
+  final double? fontSize;
+
+  const SubtitleWithFittedBox({
+    Key? key,
+    required this.text,
+    this.fontSize,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Divider(thickness: 1);
+    return Expanded(
+      child: Center(
+        child: FittedBox(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: fontSize,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
 class SubtitleForTable extends StatelessWidget {
   final String text;
+  final double? fontSize;
+
   const SubtitleForTable({
     Key? key,
     required this.text,
+    this.fontSize,
   }) : super(key: key);
 
   @override
@@ -79,11 +107,21 @@ class SubtitleForTable extends StatelessWidget {
             maxLines: 2,
             style: TextStyle(
               fontWeight: FontWeight.bold,
+              fontSize: fontSize,
             ),
           ),
         ),
       ),
     );
+  }
+}
+
+class DividerForTable extends StatelessWidget {
+  const DividerForTable({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Divider(thickness: 1);
   }
 }
 
@@ -122,7 +160,7 @@ class EditViewButton extends StatelessWidget {
 class BoxDecorationFor {
   static title() {
     return BoxDecoration(
-      color: BROWN,
+      color: CYAN900,
       borderRadius: BorderRadius.only(
         topRight: Radius.circular(20),
         bottomRight: Radius.circular(20),

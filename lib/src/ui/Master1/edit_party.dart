@@ -8,6 +8,7 @@ import 'package:mandimarket/src/resources/errors.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/ui/Master1/master_model.dart';
 import 'package:mandimarket/src/validation/party_validation.dart';
+import 'package:mandimarket/src/widgets/app_bar.dart';
 import 'package:mandimarket/src/widgets/circular_progress.dart';
 import 'package:mandimarket/src/widgets/ios_arrow_icon.dart';
 import 'package:sizer/sizer.dart';
@@ -185,13 +186,8 @@ class _EditPartiesInMasterState extends State<EditPartiesInMaster> {
   }
 
   AppBar _appbar(BuildContext context) {
-    return AppBar(
-      title: Text("Edit"),
-      leading: IosArrowIcon(
-        onPressed: () {
-          Pop(context);
-        },
-      ),
+    return AppBarCustom(context).appbar(
+      title: "Edit",
       actions: [
         _deleteButton(),
         _loadingWidget(),
