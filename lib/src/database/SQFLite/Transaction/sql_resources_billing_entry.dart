@@ -15,6 +15,34 @@ class BillingEntriesSQLResources {
     );
   }
 
+// ----------------------- UPDATE ENTRY ----------------------------------------------
+
+  static Future<int> updateEntry({
+    required Map<String, dynamic> map,
+    required int documentId,
+  }) async {
+    final db = await BillingEntrySqlDB.database;
+
+    return await db.update(
+      BillingEntrySqlDB.table,
+      map,
+      where: 'documentId = ?',
+      whereArgs: [documentId],
+    );
+  }
+
+// ------------------- DELETE ENTRY --------------------------------------------
+
+  static Future<int> deleteEntry(int documentId) async {
+    final db = await BillingEntrySqlDB.database;
+
+    return await db.delete(
+      BillingEntrySqlDB.table,
+      where: 'documentId = ?',
+      whereArgs: [documentId],
+    );
+  }
+
 //  -----------------  GET ENTRIES  --------------------------------------------
 
   static Future<List<Map<String, dynamic>>> getEntries() async {
@@ -37,8 +65,6 @@ class BillingEntriesSQLResources {
   ) async {
     final db = await BillingEntrySqlDB.database;
 
-    print(calculateDateHash(date));
-
     return await db.rawQuery(
       '''
       SELECT * 
@@ -47,6 +73,25 @@ class BillingEntriesSQLResources {
       ORDER BY bepariName COLLATE NOCASE
       ''',
     );
+  }
+
+  static Future<List<Map<String, dynamic>>> getEntriesByDocId(int docId) async {
+    final db = await BillingEntrySqlDB.database;
+
+    return await db.rawQuery(
+      '''
+      SELECT *
+      FROM ${BillingEntrySqlDB.table}
+      WHERE documentId == $docId
+      ''',
+    );
+  }
+
+// ---------------------- DELETE ALL -------------------------------------------
+  static deleteAllBillingEntries() async {
+    final db = await BillingEntrySqlDB.database;
+    int result = await db.delete(BillingEntrySqlDB.table);
+    print(result);
   }
 
 // -----------------------------------------------------------------------------

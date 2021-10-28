@@ -4,6 +4,7 @@ import 'package:mandimarket/src/blocs/Transaction_BLOC/billing_entry_BLOC.dart';
 import 'package:mandimarket/src/blocs/Transaction_BLOC/billing_entry_table_BLOC.dart';
 import 'package:mandimarket/src/constants/calculate_date_hash.dart';
 import 'package:mandimarket/src/constants/colors.dart';
+import 'package:mandimarket/src/database/SQFLite/Transaction/sql_resources_billing_entry.dart';
 import 'package:mandimarket/src/models/billing_entry_model.dart';
 import 'package:mandimarket/src/reponse/api_response.dart';
 import 'package:mandimarket/src/resources/document_id.dart';
@@ -12,6 +13,7 @@ import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/validation/billing_entry_validation.dart';
 import 'package:mandimarket/src/widgets/app_bar.dart';
 import 'package:mandimarket/src/widgets/circular_progress.dart';
+import 'package:mandimarket/src/widgets/dialogs.dart';
 import 'package:mandimarket/src/widgets/table_widgets.dart';
 import 'package:sizer/sizer.dart';
 
@@ -19,12 +21,16 @@ import 'list_of_bepari_from_PB.dart';
 
 class AddEntryInBillingEntry extends StatefulWidget {
   final DateTime date;
-  final BillingEntryTableBLOC billingEntryTableBLOC;
-  const AddEntryInBillingEntry({
-    Key? key,
+  final BillingEntryTableBLOC? billingEntryTableBLOC;
+  final bool isEdit;
+  final int? documentId;
+
+  AddEntryInBillingEntry({
     required this.date,
-    required this.billingEntryTableBLOC,
-  }) : super(key: key);
+    this.billingEntryTableBLOC,
+    this.isEdit = false,
+    this.documentId,
+  });
 
   @override
   _AddEntryInBillingEntryState createState() => _AddEntryInBillingEntryState();
@@ -57,6 +63,9 @@ class _AddEntryInBillingEntryState extends State<AddEntryInBillingEntry> {
 
   final _formKey = GlobalKey<FormState>();
 
+  late final bool isEdit = widget.isEdit && widget.documentId != null;
+  late BillingEntryEditBLOC _billingEntryEditBLOC;
+
   @override
   void initState() {
     _dateCntrl = new TextEditingController(
@@ -86,6 +95,9 @@ class _AddEntryInBillingEntryState extends State<AddEntryInBillingEntry> {
 
     _calculate = _getParametersForBillingEntry.calculateCertainParams;
 
+    if (isEdit)
+      _billingEntryEditBLOC = BillingEntryEditBLOC(widget.documentId!);
+
     super.initState();
   }
 
@@ -111,6 +123,8 @@ class _AddEntryInBillingEntryState extends State<AddEntryInBillingEntry> {
 
     _getParametersForBillingEntry.dispose();
 
+    if (isEdit) _billingEntryEditBLOC.dispose();
+
     super.dispose();
   }
 
@@ -118,72 +132,181 @@ class _AddEntryInBillingEntryState extends State<AddEntryInBillingEntry> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appbar(context),
-      body: RefreshIndicator(
-        onRefresh: () => _onRefresh(),
-        color: BLACK,
-        strokeWidth: 1.5,
-        child: StreamBuilder<ApiResponse<Map<String, dynamic>>>(
-          stream: _getParametersForBillingEntry.streamCalPara,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              switch (snapshot.data!.status) {
-                case Status.LOADING:
+      body: isEdit
+          ? _editScreen()
+          : RefreshIndicator(
+              onRefresh: () => _onRefresh(),
+              color: BLACK,
+              strokeWidth: 1.5,
+              child: StreamBuilder<ApiResponse<Map<String, dynamic>>>(
+                stream: _getParametersForBillingEntry.streamCalPara,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    switch (snapshot.data!.status) {
+                      case Status.LOADING:
+                        return circularProgress();
+
+                      case Status.ERROR:
+                        return ErrorText();
+
+                      case Status.COMPLETED:
+                        calcParams = snapshot.data!.data;
+                        print(calcParams);
+
+                        return Form(
+                          key: _formKey,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 7.w,
+                              vertical: 0.5.h,
+                            ),
+                            child: ListView(
+                              padding: EdgeInsets.only(bottom: 50),
+                              children: [
+                                _date(),
+                                _bepariNameTextField(),
+                                _unitsAndDiscount(),
+                                _pakkiRakamAndKacchiRakam(),
+                                _commissionAndKarkuni(),
+                                _aadmiAndFees(),
+                                _gavalNameTextField(),
+                                _gawaliAndMotor(),
+                                _rokAndBaki(),
+                                _miscExpTextField(),
+                                _descriptionTextField(),
+                                SizedBox(height: 2.h),
+                              ],
+                            ),
+                          ),
+                        );
+
+                      default:
+                    }
+                  }
                   return circularProgress();
+                },
+              ),
+            ),
+    );
+  }
 
-                case Status.ERROR:
-                  return ErrorText();
+  String? createdTimestamp;
 
-                case Status.COMPLETED:
-                  calcParams = snapshot.data!.data;
+  Widget _editScreen() {
+    return StreamBuilder<ApiResponse<BillingEntryModel>>(
+      stream: _billingEntryEditBLOC.stream,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          switch (snapshot.data!.status) {
+            case Status.LOADING:
+              return circularProgress();
 
-                  return Form(
-                    key: _formKey,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 7.w,
-                        vertical: 0.5.h,
-                      ),
-                      child: ListView(
-                        padding: EdgeInsets.only(bottom: 50),
-                        children: [
-                          _date(),
-                          _bepariNameTextField(),
-                          _unitsAndDiscount(),
-                          _pakkiRakamAndKacchiRakam(),
-                          _commissionAndKarkuni(),
-                          _aadmiAndFees(),
-                          _gavalNameTextField(),
-                          _gawaliAndMotor(),
-                          _rokAndBaki(),
-                          _miscExpTextField(),
-                          _descriptionTextField(),
-                          SizedBox(height: 2.h),
-                        ],
-                      ),
-                    ),
-                  );
+            case Status.ERROR:
+              return ErrorText();
 
-                default:
-              }
-            }
-            return circularProgress();
-          },
-        ),
-      ),
+            case Status.COMPLETED:
+              final model = snapshot.data!.data;
+
+              _setDetailsForEditing(model);
+
+              // In this STreamBuilder we are getting paramters from Calculation Parameters
+              // The only difference between edit and add is that
+              // In edit we are getting all the added fields and that we streaming
+              // at the top of _editScreen() widget tree
+              return StreamBuilder<ApiResponse<Map<String, dynamic>>>(
+                stream: _getParametersForBillingEntry.streamCalPara,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    switch (snapshot.data!.status) {
+                      case Status.LOADING:
+                        return circularProgress();
+
+                      case Status.ERROR:
+                        return ErrorText();
+
+                      case Status.COMPLETED:
+                        calcParams = snapshot.data!.data;
+                        print(calcParams);
+
+                        return Form(
+                          key: _formKey,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 7.w,
+                              vertical: 0.5.h,
+                            ),
+                            child: ListView(
+                              padding: EdgeInsets.only(bottom: 50),
+                              children: [
+                                _date(),
+                                _bepariNameTextField(),
+                                _unitsAndDiscount(),
+                                _pakkiRakamAndKacchiRakam(),
+                                _commissionAndKarkuni(),
+                                _aadmiAndFees(),
+                                _gavalNameTextField(),
+                                _gawaliAndMotor(),
+                                _rokAndBaki(),
+                                _miscExpTextField(),
+                                _descriptionTextField(),
+                                SizedBox(height: 2.h),
+                              ],
+                            ),
+                          ),
+                        );
+
+                      default:
+                    }
+                  }
+                  return circularProgress();
+                },
+              );
+
+            default:
+          }
+        }
+        return circularProgress();
+      },
     );
   }
 
   AppBar _appbar(BuildContext context) {
     return AppBarCustom(context).appbar(
-      title: 'Add Entry in Billing entry',
+      title: isEdit ? 'Edit Entry' : 'Add Entry in Billing entry',
       actions: [
+        IconButton(
+          onPressed: () {
+            BillingEntriesSQLResources.deleteAllBillingEntries();
+          },
+          icon: Icon(Icons.ac_unit),
+          color: WHITE,
+        ),
+        isEdit
+            ? IconButton(
+                onPressed: _deleteParty,
+                icon: Icon(Icons.delete),
+                color: Colors.red,
+              )
+            : SizedBox.shrink(),
         IconButton(
           onPressed: showNetAmt,
           icon: Icon(Icons.check),
-          color: WHITE,
         ),
       ],
+    );
+  }
+
+  void _deleteParty() {
+    DialogsCustom.delete(
+      context,
+      onPressedYes: () {
+        widget.billingEntryTableBLOC!.deleteEntry(
+          context: context,
+          documentId: widget.documentId!,
+        );
+      },
     );
   }
 
@@ -445,6 +568,7 @@ class _AddEntryInBillingEntryState extends State<AddEntryInBillingEntry> {
       MaterialPageRoute(
         builder: (context) => ListOfBepariFromPB(
           date: widget.date,
+          isEdit: isEdit,
         ),
       ),
     );
@@ -556,6 +680,30 @@ class _AddEntryInBillingEntryState extends State<AddEntryInBillingEntry> {
     );
   }
 
+  // (EDITING) - SET DETAILS
+  void _setDetailsForEditing(BillingEntryModel? model) {
+    if (model != null) {
+      _bepariNameCntrl.text = model.bepariName;
+      _unitsCntrl.text = model.unit;
+      _discountCntrl.text = model.discount;
+      _subAmountCntrl.text = model.subAmount;
+      _netAmountCntrl.text = model.netAmount;
+      _dalaliCntrl.text = model.dalali;
+      _karkuniCntrl.text = model.karkuni;
+      _aadmiCntrl.text = model.aadmi;
+      _feesCntrl.text = model.fees;
+      _gavaliCntrl.text = model.gavali;
+      _gavalsNameCntrl.text = model.gavalsName;
+      _motorCntrl.text = model.motor;
+      _rokCntrl.text = model.rok;
+      _bakiCntrl.text = model.baki;
+      _misExpCntrl.text = model.miscExpenses;
+      _descCntrl.text = model.description;
+
+      createdTimestamp = model.timestamp;
+    }
+  }
+
   // SUBMIT
   _submit() {
     final model = new BillingEntryModel(
@@ -581,7 +729,19 @@ class _AddEntryInBillingEntryState extends State<AddEntryInBillingEntry> {
       documentId: getDocumentId,
     );
 
-    widget.billingEntryTableBLOC.addEntry(
+    if (isEdit) {
+      model.documentId = widget.documentId!;
+      model.timestamp = createdTimestamp!;
+
+      widget.billingEntryTableBLOC!.updateEntry(
+        map: model.toMap(),
+        documentId: widget.documentId!,
+        context: context,
+      );
+      return;
+    }
+
+    widget.billingEntryTableBLOC!.addEntry(
       model,
       context: context,
     );

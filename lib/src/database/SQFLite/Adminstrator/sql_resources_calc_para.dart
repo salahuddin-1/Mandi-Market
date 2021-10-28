@@ -49,7 +49,7 @@ class SQLresourcesCalcPara {
   }
 
 // ---------------------------------------------------------------------------
-  static Future<Map<String, dynamic>> getDiscountAndCommissionRe1() async {
+  static Future<Map<String, dynamic>?> getDiscountAndCommissionRe1() async {
     final db = await CalculationParameterSqlDB.database;
 
     var listMaps = await db.rawQuery(
@@ -62,10 +62,7 @@ class SQLresourcesCalcPara {
     );
 
     if (listMaps.isEmpty) {
-      return {
-        "discount": "0",
-        "commissionRe1": "0",
-      };
+      return null;
     }
 
     return listMaps[0];
@@ -92,6 +89,27 @@ class SQLresourcesCalcPara {
     }
 
     return listMaps[0];
+  }
+
+// ---------------------- Check If DB is null ----------------------------------
+
+  static Future<bool> isCalcParamsNull() async {
+    final db = await CalculationParameterSqlDB.database;
+
+    var listMaps = await db.rawQuery(
+      '''
+        SELECT karkuni, commission
+        FROM ${CalculationParameterSqlDB.table}
+        ORDER BY timestamp DESC
+        LIMIT 1
+      ''',
+    );
+
+    if (listMaps.isEmpty) {
+      return true;
+    }
+
+    return false;
   }
 
 // ---------------------------------------------------------------------------

@@ -54,6 +54,7 @@ class SagaBookCalculations {
   var _discount;
   _getDiscount() async {
     var map = await SQLresourcesCalcPara.getDiscountAndCommissionRe1();
+    if (map == null) return;
 
     var discount = double.tryParse(map['discount']);
 
@@ -63,10 +64,15 @@ class SagaBookCalculations {
   double? _commissionRe1;
   _getCommissionRe1() async {
     var map = await SQLresourcesCalcPara.getDiscountAndCommissionRe1();
+    if (map == null) return;
 
     var commissionRe1 = double.tryParse(map['commissionRe1']);
 
     this._commissionRe1 = commissionRe1;
+  }
+
+  Future<Map<String, dynamic>?> isNull() async {
+    return await SQLresourcesCalcPara.getDiscountAndCommissionRe1();
   }
 
   SagaBookCalculations() {

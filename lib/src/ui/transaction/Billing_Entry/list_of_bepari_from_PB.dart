@@ -8,8 +8,13 @@ import 'package:sizer/sizer.dart';
 
 class ListOfBepariFromPB extends StatefulWidget {
   final DateTime date;
+  final bool isEdit;
 
-  const ListOfBepariFromPB({Key? key, required this.date}) : super(key: key);
+  const ListOfBepariFromPB({
+    Key? key,
+    required this.date,
+    this.isEdit = false,
+  }) : super(key: key);
 
   @override
   _ListOfBepariFromPBState createState() => _ListOfBepariFromPBState();
@@ -22,6 +27,7 @@ class _ListOfBepariFromPBState extends State<ListOfBepariFromPB> {
   void initState() {
     _getParametersForBillingEntry = new GetParametersForBillingEntry(
       widget.date,
+      isEdit: widget.isEdit,
     );
 
     super.initState();
