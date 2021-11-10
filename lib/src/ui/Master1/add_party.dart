@@ -157,8 +157,10 @@ class _AddMasterState extends State<AddMaster> {
           icon: Icon(Icons.delete),
         ),
         IconButton(
-          onPressed: () {
-            MasterSqlResources().getEntries(widget.type);
+          onPressed: () async {
+            final listMaps = await MasterSqlResources().getEntries(widget.type);
+
+            print(listMaps);
           },
           icon: Icon(Icons.ac_unit),
         ),

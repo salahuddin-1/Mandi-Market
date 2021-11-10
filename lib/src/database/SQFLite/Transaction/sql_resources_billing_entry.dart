@@ -75,6 +75,7 @@ class BillingEntriesSQLResources {
     );
   }
 
+// -------------------- GET ENTRIES BY DOC ID ----------------------------------
   static Future<List<Map<String, dynamic>>> getEntriesByDocId(int docId) async {
     final db = await BillingEntrySqlDB.database;
 
@@ -92,6 +93,23 @@ class BillingEntriesSQLResources {
     final db = await BillingEntrySqlDB.database;
     int result = await db.delete(BillingEntrySqlDB.table);
     print(result);
+  }
+
+  //  -----------------  GET ENTRIES  --------------------------------------------
+
+  static Future<List<Map<String, dynamic>>> getNetAmount() async {
+    final db = await BillingEntrySqlDB.database;
+
+    var listMap = await db.rawQuery(
+      '''
+        SELECT bepariName, netAmount, documentId, selectedTimestamp
+        FROM ${BillingEntrySqlDB.table}
+      ''',
+    );
+
+    print(listMap);
+
+    return listMap;
   }
 
 // -----------------------------------------------------------------------------

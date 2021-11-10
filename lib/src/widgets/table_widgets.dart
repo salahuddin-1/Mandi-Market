@@ -127,9 +127,11 @@ class DividerForTable extends StatelessWidget {
 
 class EditViewButton extends StatelessWidget {
   final Function onPressed;
+  final String text;
   const EditViewButton({
     Key? key,
     required this.onPressed,
+    this.text = "Edit/View",
   }) : super(key: key);
 
   @override
@@ -144,7 +146,7 @@ class EditViewButton extends StatelessWidget {
           width: 25.w,
           // color: Colors.red,
           child: Text(
-            "Edit/View",
+            this.text,
             style: TextStyle(
               fontSize: 11,
               color: Colors.blue,

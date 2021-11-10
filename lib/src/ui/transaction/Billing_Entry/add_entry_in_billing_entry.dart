@@ -5,6 +5,7 @@ import 'package:mandimarket/src/blocs/Transaction_BLOC/billing_entry_table_BLOC.
 import 'package:mandimarket/src/constants/calculate_date_hash.dart';
 import 'package:mandimarket/src/constants/colors.dart';
 import 'package:mandimarket/src/database/SQFLite/Transaction/sql_resources_billing_entry.dart';
+import 'package:mandimarket/src/database/SQFLite/Transaction/sql_resources_payment_bepari.dart';
 import 'package:mandimarket/src/models/billing_entry_model.dart';
 import 'package:mandimarket/src/reponse/api_response.dart';
 import 'package:mandimarket/src/resources/document_id.dart';
@@ -68,6 +69,8 @@ class _AddEntryInBillingEntryState extends State<AddEntryInBillingEntry> {
 
   @override
   void initState() {
+    PaymentBepariSQLResources.getBills('Beapri');
+
     _dateCntrl = new TextEditingController(
       text: formatDate(widget.date),
     );

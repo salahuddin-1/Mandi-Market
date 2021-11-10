@@ -15,6 +15,33 @@ class SQLresourcesCalcPara {
     );
   }
 
+// -------------- EDIT ENTRY -----------------------------------------------
+  static Future<int> editEntry({
+    required Map<String, dynamic> map,
+    required String documentId,
+  }) async {
+    final db = await CalculationParameterSqlDB.database;
+
+    return await db.update(
+      CalculationParameterSqlDB.table,
+      map,
+      where: 'documentId = ?',
+      whereArgs: [documentId],
+    );
+  }
+
+// ------------------- DELETE ENTRY --------------------------------------------
+
+  static Future<int> deleteEntry(String documentId) async {
+    final db = await CalculationParameterSqlDB.database;
+
+    return await db.delete(
+      CalculationParameterSqlDB.table,
+      where: 'documentId = ?',
+      whereArgs: [documentId],
+    );
+  }
+
 // -------------------------------------------------------------------------
   static clearDb() async {
     final db = await CalculationParameterSqlDB.database;
@@ -37,6 +64,24 @@ class SQLresourcesCalcPara {
     );
 
     print(listMap);
+
+    return listMap;
+  }
+
+// ---------------- GET ENTRY BY DOCUMENT ID -----------------------------------
+
+  static Future<List<Map<String, dynamic>>> getEntryByDocumentId(
+    String documentId,
+  ) async {
+    final db = await CalculationParameterSqlDB.database;
+
+    var listMap = await db.rawQuery(
+      '''
+        SELECT * 
+        FROM ${CalculationParameterSqlDB.table}
+        WHERE $documentId == documentId
+      ''',
+    );
 
     return listMap;
   }

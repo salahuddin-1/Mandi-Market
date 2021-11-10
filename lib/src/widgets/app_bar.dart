@@ -64,7 +64,7 @@ class AppBarCustom {
           ? [
               AddButton(
                 onPressed: () => onPressedAdd!(),
-                textColor: Colors.white,
+                textColor: BLACK,
               )
             ]
           : actions,

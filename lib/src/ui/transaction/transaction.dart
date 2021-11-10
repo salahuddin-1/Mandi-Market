@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:mandimarket/src/constants/colors.dart';
 import 'package:mandimarket/src/database/SQFLite/Transaction/sql_db_purchase_book.dart';
+import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/widgets/main_widgets.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sqflite/sqflite.dart';
 import 'Billing_Entry/billing_entries_dialog.dart';
+import 'Payment_Bepari/table_payment_bepari.dart';
 import 'Purchase_Book/on_tap_purchase_book.dart';
 
 class TransactionScreen extends StatefulWidget {
@@ -19,11 +21,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
   @override
   void initState() {
     _billingEntryDialog = BillingEntryDialog();
-
-    // WidgetsBinding.instance!.addPostFrameCallback((_) async {
-    //   await showDialog<String>(
-    //       context: context, builder: (BuildContext context) => AlertDialog());
-    // });
     super.initState();
   }
 
@@ -64,7 +61,17 @@ class _TransactionScreenState extends State<TransactionScreen> {
             Expanded(
               child: Row(
                 children: [
-                  MainTitleBox(title: 'Payment Bepari', onPressed: () {}),
+                  MainTitleBox(
+                    title: 'Payment Bepari',
+                    onPressed: () {
+                      Push(
+                        context,
+                        pushTo: PaymentBepari(
+                          title: 'Payment Bepari',
+                        ),
+                      );
+                    },
+                  ),
                   MainTitleBox(title: 'Payment Gawaal', onPressed: () {}),
                 ],
               ),

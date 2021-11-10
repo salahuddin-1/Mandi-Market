@@ -1,6 +1,3 @@
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:data_connection_checker/data_connection_checker.dart'
-    show DataConnectionChecker;
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mandimarket/src/Data_Holder/Administrator/inherited_widget.dart';
@@ -10,6 +7,7 @@ import 'package:mandimarket/src/database/SQFLite/Adminstrator/sql_resources_calc
 import 'package:mandimarket/src/models/calc_para_model.dart';
 import 'package:mandimarket/src/resources/errors.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
+import 'package:mandimarket/src/widgets/no_internet_connection.dart';
 import 'package:mandimarket/src/widgets/toast.dart';
 
 class HandleCalcParam {
@@ -20,15 +18,7 @@ class HandleCalcParam {
   final _getX = Get.put(GetXDiscountAndCommissionRe());
 
   void addParameters(CalcParaModel calcParaModel) async {
-    if (!await DataConnectionChecker().hasConnection) {
-      ShowToast.toast(
-        'No Internet Connection',
-        context!,
-        4,
-      );
-
-      return;
-    }
+    if (!await hasInternetConnectionAlert(context!)) return;
 
     try {
       await SQLresourcesCalcPara.insertEntry(calcParaModel.toMap());
@@ -45,6 +35,64 @@ class HandleCalcParam {
 
       ShowToast.toast(
         'Parameter added successfully',
+        context!,
+        3,
+      );
+
+      Pop(context!);
+    } catch (e) {
+      ErrorCustom.catchError(context!, e.toString());
+
+      print(e.toString());
+    }
+  }
+
+  void editParameter(CalcParaModel calcParaModel) async {
+    if (!await hasInternetConnectionAlert(context!)) return;
+
+    try {
+      await SQLresourcesCalcPara.editEntry(
+        map: calcParaModel.toMap(),
+        documentId: calcParaModel.documentId!,
+      );
+
+      await CalcParamFbDB.update(
+        docID: calcParaModel.documentId.toString(),
+        map: calcParaModel.toMap(),
+      );
+
+      CalcParamDataHolder.value.feedEntries();
+
+      _getX.setDiscount(double.tryParse(calcParaModel.discount)!);
+      _getX.setCommissionRe1(double.tryParse(calcParaModel.commissionRe1)!);
+
+      ShowToast.toast(
+        'Parameter Edited',
+        context!,
+        3,
+      );
+
+      Pop(context!);
+    } catch (e) {
+      ErrorCustom.catchError(context!, e.toString());
+
+      print(e.toString());
+    }
+  }
+
+  void deleteParameter(String docId) async {
+    if (!await hasInternetConnectionAlert(context!)) return;
+
+    try {
+      await SQLresourcesCalcPara.deleteEntry(docId);
+
+      await CalcParamFbDB.delete(
+        docID: docId,
+      );
+      CalcParamDataHolder.value.feedEntries();
+
+      ShowToast.toast(
+        'Deleted',
         context!,
         3,
       );

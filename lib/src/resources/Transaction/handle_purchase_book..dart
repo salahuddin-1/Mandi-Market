@@ -6,6 +6,7 @@ import 'package:mandimarket/src/database/SQFLite/Transaction/sql_resources_purch
 import 'package:mandimarket/src/models/purchase_book_model.dart';
 import 'package:mandimarket/src/resources/errors.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
+import 'package:mandimarket/src/widgets/no_internet_connection.dart';
 import 'package:mandimarket/src/widgets/toast.dart';
 
 class HandlePurchaseBook {
@@ -14,13 +15,8 @@ class HandlePurchaseBook {
   HandlePurchaseBook(this.context);
 
   void addEntryInPurchaseBook(PurchaseBookModel purchaseBookModel) async {
-    // final listMaps = await SQLresourcesCalcPara.getEntries();
+    if (!await hasInternetConnectionAlert(context!)) return;
 
-    // final map = listMaps[0];
-
-    // if (map['toDateHash'] as int < purchaseBookModel.dateHash) {
-
-    // }
     try {
       // Add in Local DB
       await PurchaseBookSQLResources().insertEntry(

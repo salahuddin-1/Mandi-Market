@@ -119,5 +119,35 @@ class MasterSqlResources {
     return partyExists;
   }
 
+// ------------------------ GET OPENING BALANCE --------------------------------
+
+  static Future<Map<String, dynamic>> getOpeningBalance(
+    String partyName,
+  ) async {
+    Map<String, Database> dbs = await MasterSqlDB.databases;
+
+    var listMap = await dbs[MasterSqlDB.bepariTable]!.rawQuery(
+      '''
+        SELECT openingBalance
+        FROM ${MasterSqlDB.bepariTable}
+        WHERE partyName == "$partyName"
+      ''',
+    );
+
+    return listMap[0];
+  }
+
+  static Future<int> getLengthOfBeparis(String type) async {
+    Map<String, Database> dbs = await MasterSqlDB.databases;
+
+    var listMap = await dbs[MasterSqlDB.bepariTable]!.rawQuery(
+      '''
+        SELECT openingBalance
+        FROM $type
+      ''',
+    );
+
+    return listMap.length;
+  }
 // -----------------------------------------------------------------------------
 }

@@ -1,10 +1,12 @@
 import 'package:rxdart/rxdart.dart';
 
-final _dateTime = DateTime.now();
-
 class SelectDateBloc {
-  final _todateCntrl = BehaviorSubject<DateTime?>.seeded(_dateTime);
-  final _fromDateCntrl = BehaviorSubject<DateTime?>.seeded(_dateTime);
+  final _dateTime = DateTime.now();
+  DateTime? _fromDate;
+  DateTime? _toDate;
+
+  late final BehaviorSubject<DateTime?> _todateCntrl;
+  late final BehaviorSubject<DateTime?> _fromDateCntrl;
 
   selectToDate(DateTime date) {
     _todateCntrl.sink.add(date);
@@ -24,5 +26,23 @@ class SelectDateBloc {
   void dispose() {
     _todateCntrl.close();
     _fromDateCntrl.close();
+  }
+
+  // SelectDateBloc({
+  //   this.fromDate,
+  //   this.toDate,
+  // });
+
+  SelectDateBloc({DateTime? fromDate, DateTime? toDate}) {
+    if (fromDate == null && toDate == null) {
+      this._fromDate = _dateTime;
+      this._toDate = _dateTime;
+    } else {
+      this._fromDate = fromDate;
+      this._toDate = toDate;
+    }
+
+    _fromDateCntrl = BehaviorSubject<DateTime?>.seeded(this._fromDate);
+    _todateCntrl = BehaviorSubject<DateTime?>.seeded(this._toDate);
   }
 }

@@ -102,7 +102,15 @@ class _SetParameterState extends State<SetParameter> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   EditViewButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Push(
+                                        context,
+                                        pushTo: AddParameter(
+                                          isEdit: true,
+                                          documentId: calcParaModel.documentId!,
+                                        ),
+                                      );
+                                    },
                                   ),
                                   SubtitleForTable(
                                     text: '${calcParaModelList.length - index}',

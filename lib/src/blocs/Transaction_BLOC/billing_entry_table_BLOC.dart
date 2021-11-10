@@ -2,10 +2,13 @@
 import 'package:data_connection_checker/data_connection_checker.dart'
     show DataConnectionChecker;
 import 'package:flutter/cupertino.dart';
+import 'package:mandimarket/src/blocs/Transaction_BLOC/Payment_Bepari_BLOC/payment_bepari_insert_entry.dart';
 import 'package:mandimarket/src/database/Firebase/Transaction/fb_db_billing_entry.dart';
 import 'package:mandimarket/src/database/SQFLite/Transaction/sql_resources_billing_entry.dart';
+import 'package:mandimarket/src/database/SQFLite/Transaction/sql_resources_payment_bepari.dart';
 import 'package:mandimarket/src/models/billing_entry_model.dart';
 import 'package:mandimarket/src/reponse/api_response.dart';
+import 'package:mandimarket/src/resources/document_id.dart';
 import 'package:mandimarket/src/resources/errors.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/widgets/no_internet_connection.dart';
@@ -64,6 +67,19 @@ class BillingEntryTableBLOC {
         map: billingEntryModel.toMap(),
       );
 
+// ---------------------- Update Bill
+
+      final billMap =
+          await PaymentBepariInsertEntry.updateEntryThroughBillingEntry(
+        billingEntryModel,
+        bepariName: billingEntryModel.bepariName,
+      );
+
+      await PaymentBepariSQLResources.updateEntry(
+        billMap,
+        bepariName: billingEntryModel.bepariName,
+      );
+// ----------------------
       await getEntries();
 
       Pop(context!);
@@ -79,6 +95,20 @@ class BillingEntryTableBLOC {
       ErrorCustom.catchError(context!, e.toString());
     }
   }
+
+  // _addEntryInPaymentToBepari() {
+  //   {
+  //           'documentId': map['documentId'],
+  //           'timestamp': DateTime.now().toIso8601String(),
+  //           'dateHash': 0,
+  //           'selectedTimestamp': '',
+  //           'bepariName': map['bepariName'],
+  //           'openingBalance': '',
+  //           'bills': jsonEncode(dataBills[map['bepariName']]),
+  //           'paid Amount': '',
+  //           'pendingAmount': '',
+  //         };
+  // }
 
 // ------------------------ UPDATE ENTRY ---------------------------------------
   Future<void> updateEntry({

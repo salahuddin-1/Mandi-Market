@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:mandimarket/src/Data_Holder/Master/inherited_widget.dart';
+import 'package:mandimarket/src/blocs/Transaction_BLOC/Payment_Bepari_BLOC/payment_bepari_insert_entry.dart';
 import 'package:mandimarket/src/database/SQFLite/Master/sql_resources_master.dart';
+import 'package:mandimarket/src/database/SQFLite/Transaction/sql_resources_payment_bepari.dart';
 import 'package:mandimarket/src/database/master_database.dart';
 import 'package:mandimarket/src/dependency_injection/user_credentials.dart';
 import 'package:mandimarket/src/resources/errors.dart';
 import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/ui/Master1/master_model.dart';
+import 'package:mandimarket/src/widgets/no_internet_connection.dart';
 import 'package:mandimarket/src/widgets/toast.dart';
 
 class HandleMaster {
@@ -16,6 +19,8 @@ class HandleMaster {
   HandleMaster(this.context);
 
   void addParty(MasterModel masterModel, {required String type}) async {
+    if (!await hasInternetConnectionAlert(context!)) return;
+
     try {
       var partyExists = await MasterSqlResources.getUserByName(
         type,
@@ -32,7 +37,7 @@ class HandleMaster {
         type: type,
       );
 
-      MasterDataHolder.value.feedEntries();
+      await MasterDataHolder.value.feedEntries();
 
       await MasterDatabase.insertEntry(
         phoneNumber: _phNo,
@@ -40,6 +45,11 @@ class HandleMaster {
         documentId: masterModel.documentId.toString(),
         map: masterModel.toMap(),
       );
+
+      // ADD PAYMENT TO BEPARI
+      if (type == 'bepari') {
+        await _addBillInPaymentToBepari(masterModel);
+      }
 
       ShowToast.toast(
         'Party Added Successfully',
@@ -53,6 +63,17 @@ class HandleMaster {
       print(e);
     }
   }
+
+  // ------------- ADD BILL IN PAYMENT TO BEPARI -------------------------------
+
+  Future<int> _addBillInPaymentToBepari(MasterModel masterModel) async {
+    final Map<String, dynamic> billMap =
+        PaymentBepariInsertEntry.addEntryThroughMaster(masterModel);
+
+    return await PaymentBepariSQLResources.insertEntry(billMap);
+  }
+
+  // ---------------------------------------------------------------------------
 
   void updateParty(MasterModel masterModel, {required String type}) async {
     try {

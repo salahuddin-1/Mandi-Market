@@ -25,7 +25,7 @@ class CalcParaModel {
     required this.timestamp,
   });
 
-  toMap() {
+  Map<String, dynamic> toMap() {
     final Map<String, dynamic> map = Map<String, dynamic>();
 
     if (documentId != null) {

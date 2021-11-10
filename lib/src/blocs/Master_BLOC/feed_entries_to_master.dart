@@ -15,7 +15,7 @@ class FeedEntriesToMasterBLOC {
 
   void dispose() => _streamCntrl.close();
 
-  void feedEntries() async {
+  Future<void> feedEntries() async {
     var list = await _masterResources.getListsOfModel(type);
     _streamCntrl.sink.add(list);
   }

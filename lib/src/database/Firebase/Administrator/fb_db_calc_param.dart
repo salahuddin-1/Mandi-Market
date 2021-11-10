@@ -14,4 +14,25 @@ class CalcParamFbDB {
         .doc(docID)
         .set(map);
   }
+
+  static Future<void> update({
+    required String docID,
+    required Map<String, dynamic> map,
+  }) async {
+    return await Database.administratorRef
+        .doc(ownersPhoneNumber)
+        .collection('calculationParameters')
+        .doc(docID)
+        .update(map);
+  }
+
+  static Future<void> delete({
+    required String docID,
+  }) async {
+    return await Database.administratorRef
+        .doc(ownersPhoneNumber)
+        .collection('calculationParameters')
+        .doc(docID)
+        .delete();
+  }
 }

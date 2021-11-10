@@ -18,11 +18,18 @@ class DebitCreditBloc {
   String get value => _streamCntrl.value;
 
   DebitCreditBloc({required String type}) {
+    type = type.toLowerCase();
+
     String _value = "Debit";
 
     if (type == "Customer" || type == "Pedi") {
       _value = "Credit";
     }
+
+    if (type == 'bepari') {
+      _value = "Credit";
+    }
+
     _streamCntrl = BehaviorSubject<String>.seeded(_value);
   }
 }
