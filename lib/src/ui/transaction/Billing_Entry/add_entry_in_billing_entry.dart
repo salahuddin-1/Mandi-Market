@@ -69,8 +69,6 @@ class _AddEntryInBillingEntryState extends State<AddEntryInBillingEntry> {
 
   @override
   void initState() {
-    PaymentBepariSQLResources.getBills('Beapri');
-
     _dateCntrl = new TextEditingController(
       text: formatDate(widget.date),
     );
@@ -730,6 +728,7 @@ class _AddEntryInBillingEntryState extends State<AddEntryInBillingEntry> {
       description: _descCntrl.text.trim(),
       miscExpenses: _misExpCntrl.text.trim(),
       documentId: getDocumentId,
+      billPaid: '0',
     );
 
     if (isEdit) {

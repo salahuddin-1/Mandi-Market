@@ -52,7 +52,7 @@ class CheckInternet {
                   4,
                 );
               },
-              child: Text("OK"),
+              child: Text("Retry"),
             ),
           ],
         );

@@ -38,6 +38,8 @@ class MasterSqlDB {
   static final String _colRemark = 'remark';
   static final String _colDebitOrCredit = 'debitOrCredit';
   static final String _colTimestamp = 'timestamp';
+  static final String _colOpeningBalancePaid = 'openingBalancePaid';
+  static final String _colOpeningBalanceReceived = 'openingBalanceReceived';
 
   static Future<Map<String, Database>> get databases async {
     if (_databases == null) {
@@ -94,7 +96,9 @@ class MasterSqlDB {
             $_colOpeningBalance INTEGER,
             $_colRemark TEXT,
             $_colDebitOrCredit TEXT,                     
-            $_colTimestamp TEXT
+            $_colTimestamp TEXT,
+            $_colOpeningBalancePaid TEXT,
+            $_colOpeningBalanceReceived TEXT
            )
           ''',
         );

@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:mandimarket/src/constants/calculate_date_hash.dart';
-import 'package:mandimarket/src/database/SQFLite/Master/sql_resources_master.dart';
 import 'package:mandimarket/src/database/SQFLite/Transaction/sql_resources_payment_bepari.dart';
 import 'package:mandimarket/src/models/billing_entry_model.dart';
 import 'package:mandimarket/src/models/payment_bepari_model.dart';
@@ -9,7 +8,7 @@ import 'package:mandimarket/src/resources/document_id.dart';
 import 'package:mandimarket/src/ui/Master1/master_model.dart';
 
 class PaymentBepariInsertEntry {
-  static Future<Map<String, dynamic>> updateEntryThroughBillingEntry(
+  static Future<Map<String, dynamic>> pdateEntryThroughBillingEntry(
     BillingEntryModel billingEntryModel, {
     required String bepariName,
   }) async {
@@ -25,12 +24,26 @@ class PaymentBepariInsertEntry {
 
     List<Map<String, dynamic>> bills = [];
 
+    double balAmtToPay = double.parse(masterBillModel.balAmtToPay!);
+    double balAmtToReceive = double.parse(masterBillModel.balAmtToReceive!);
+
     double pendingAmount = double.tryParse(
-      masterBillModel.openingBalance!.pending!,
+      masterBillModel.openingBalance!.amount!,
     )!;
 
-    double paidAmount = double.tryParse(
-      masterBillModel.openingBalance!.paid!,
+    // If amount is receiving we don't want to add it in pending amount
+    if (masterBillModel.openingBalance!.isReceiving!) {
+      pendingAmount = 0;
+    }
+
+    double paidAmount = 0;
+
+    double receivingAmount = double.tryParse(
+      masterBillModel.receivingAmount!,
+    )!;
+
+    double receivedAmount = double.tryParse(
+      masterBillModel.receivedAmount!,
     )!;
 
     // MORE THAN 1 BILL EXISTS
@@ -63,6 +76,8 @@ class PaymentBepariInsertEntry {
     int currentDateHash = billingEntryModel.dateHash;
     pendingAmount = pendingAmount + double.tryParse(billAmount)!;
 
+    balAmtToPay = balAmtToPay + double.parse(billAmount);
+
     // Adding New bill
     bills.add(
       {
@@ -83,75 +98,15 @@ class PaymentBepariInsertEntry {
       'bills': jsonEncode(bills),
       'pendingAmount': pendingAmount.toString(),
       'paidAmount': paidAmount.toString(),
+      'receivedAmount': receivedAmount,
+      'receivingAmount': receivingAmount,
+      'balanceAmountToPay': balAmtToPay,
+      'balanceAmountToReceive': balAmtToReceive,
     };
-    // } else {
-    //   // Bepari name does not exists , that means bepari is not added in masters
-    //   // TODO
-    //   // bill is null
-    // }
 
     print(map);
 
     return map;
-  }
-
-// -------------------- UPDATE FROM BILLING ENTRY ------------------------------
-
-  insert(BillingEntryModel billingEntryModel) async {
-    final openingBal = await MasterSqlResources.getOpeningBalance(
-      billingEntryModel.bepariName,
-    );
-
-    final billsMap = await PaymentBepariSQLResources.getBills(
-      billingEntryModel.bepariName,
-    );
-
-    Map<String, dynamic> map = {};
-
-    // NEW BILL
-    if (billsMap == null) {
-      List<String> bills = [];
-
-      bills.add(billingEntryModel.netAmount);
-
-      map = {
-        'documentId': getDocumentId,
-        'timestamp': DateTime.now().toIso8601String(),
-        'dateHash': billingEntryModel.dateHash,
-        'selectedTimestamp': billingEntryModel.selectedTimestamp,
-        'bepariName': billingEntryModel.bepariName,
-        'openingBalance': openingBal['openingBalance'],
-        'bills': jsonEncode(bills),
-        'pendingAmount': billingEntryModel.netAmount,
-        'paid Amount': '0',
-      };
-    }
-
-    // BILL EXISTS
-    if (billsMap != null) {
-      final List<String> bills = jsonDecode(billsMap['bills']);
-      bills.add(billingEntryModel.netAmount);
-
-      // Calculate total amount pending
-
-      double amountPending = 0;
-
-      bills.forEach(
-        (element) {
-          double bill = double.parse(element);
-          amountPending = amountPending + bill;
-        },
-      );
-
-      // ADD
-      map = {
-        'bills': jsonEncode(bills),
-        'pendingAmount': amountPending,
-      };
-    }
-
-    // ADD
-    await PaymentBepariSQLResources.insertEntry(map);
   }
 
 // ------------- ADD THROUGH MASTER --------------------------------------------
@@ -161,28 +116,35 @@ class PaymentBepariInsertEntry {
 
     final openingBalance = masterModel.openingBalance.toString();
 
-    // final billMap = {
-    //   'pending' : '',
-    //   'paid' : '',
-    //   'date' : '',
-    // };
-
-    // bills.add(billMap);
-
     final DateTime timestamp = DateTime.tryParse(masterModel.timestamp!)!;
 
+    String balanceRemaingOpenBal = openingBalance;
     String pendingAmount = openingBalance;
-    String paidAmount = '0';
+    String receivingAmount = '0';
 
+    // INITIALLY 0
+    String paidAmount = '0';
+    String receivedAmount = '0';
+
+    String balAmtToPay = pendingAmount;
+    String balAmtToReceive = '0';
+
+    bool isReceiving = false;
+
+    //  ----------  RECEIVING  ----------------
     if (masterModel.debitOrCredit.toLowerCase() == 'debit') {
       pendingAmount = '0';
-      paidAmount = openingBalance;
+      receivingAmount = openingBalance;
+      isReceiving = true;
+      balAmtToPay = '0';
+      balAmtToReceive = receivingAmount;
     }
-
+    // ----------------------------------------
     final openingBalMap = {
-      'pending': pendingAmount,
-      'paid': paidAmount,
+      'amount': openingBalance,
+      'clearedAmount': '0',
       'date': timestamp.toIso8601String(),
+      'isReceiving': isReceiving,
     };
 
     final map = {
@@ -195,9 +157,71 @@ class PaymentBepariInsertEntry {
       'bills': jsonEncode(bills),
       'pendingAmount': pendingAmount,
       'paidAmount': paidAmount,
+      'receivedAmount': receivedAmount,
+      'receivingAmount': receivingAmount,
+      'balanceAmountToPay': balAmtToPay,
+      'balanceAmountToReceive': balAmtToReceive,
+
       // 'debitOrCredit': masterModel.debitOrCredit,
     };
 
     return map;
+  }
+}
+
+class UpdateEntryThroughBill {
+  UpdateEntryThroughBill(this.bepariName);
+
+  late String bepariName;
+
+  Future<Map<String, dynamic>> updateEntryThroughBill(
+    BillingEntryModel billingEntryModel,
+  ) async {
+    PaymentBepariModel paymentBepariModel = await _getPaymentBepariModel();
+
+    //  ------ Balance Amount to Pay ------
+    double _currentBillAmount = double.parse(billingEntryModel.netAmount);
+
+    double balanceAmtToPay = _currentBillAmount +
+        double.parse(
+          paymentBepariModel.balAmtToPay!,
+        );
+    // -------------------------------------
+
+    // ------- Pending Amount ---------
+    double pendingAmt = double.parse(paymentBepariModel.pendingAmount!);
+    pendingAmt = _currentBillAmount + pendingAmt;
+    // ---------------------------------
+
+    // -------- Paid Amount ------------
+    double paidAmt = double.parse(paymentBepariModel.paidAmount!);
+    // ----------------------------------
+
+    final map = {
+      'documentId': paymentBepariModel.documentId,
+      'timestamp': paymentBepariModel.timestamp,
+      'dateHash': billingEntryModel.dateHash,
+      // Bcoz selected Timestamp will be of current bill
+      'selectedTimestamp': billingEntryModel.selectedTimestamp,
+      'bepariName': bepariName,
+      'pendingAmount': pendingAmt.toString(),
+      'paidAmount': paidAmt.toString(),
+      'receivedAmount': paymentBepariModel.receivedAmount,
+      'receivingAmount': paymentBepariModel.receivingAmount,
+      'balanceAmountToPay': balanceAmtToPay.toString(),
+      'balanceAmountToReceive': paymentBepariModel.balAmtToReceive,
+    };
+
+    print(map);
+    return map;
+  }
+
+  // We are getting that bill when it was added in Masters
+  Future<PaymentBepariModel> _getPaymentBepariModel() async {
+    final paymentBepariMap =
+        await PaymentBepariSQLResources.getBillByBepariName(bepariName);
+
+    // Deserializing that bill
+    return PaymentBepariModel.fromJson(paymentBepariMap!);
   }
 }

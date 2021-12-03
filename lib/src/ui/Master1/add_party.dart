@@ -236,6 +236,8 @@ class _AddMasterState extends State<AddMaster> {
         debitOrCredit: _debitCreditBloc!.value,
         timestamp: DateTime.now().toIso8601String(),
         documentId: getDocumentId,
+        openingBalancePaid: "0",
+        openingBalanceReceived: "0",
       );
 
       HandleMaster(context).addParty(

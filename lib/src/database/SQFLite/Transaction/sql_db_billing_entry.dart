@@ -32,6 +32,7 @@ class BillingEntrySqlDB {
   static final String _colDescription = 'description';
   static final String _colMiscExp = 'miscExpenses';
   static final String _colDocumentId = 'documentId';
+  static final String _colbillPaid = 'billPaid';
 
   static Future<Database> get database async {
     if (_database == null) {
@@ -72,7 +73,8 @@ class BillingEntrySqlDB {
             $_colRok TEXT,
             $_colBaki TEXT,
             $_colDescription TEXT,
-            $_colMiscExp TEXT
+            $_colMiscExp TEXT,
+            $_colbillPaid TEXT
            )
           ''',
         );

@@ -86,6 +86,20 @@ class MasterSqlResources {
     return listmap.map((map) => MasterModel.fromJSON(map)).toList();
   }
 
+// ------------------- GET OPENING BAL BY BEPARI NAME --------------------------
+
+  static Future<List<Map<String, dynamic>>> getEntryByBepariName(
+    String bepariName,
+  ) async {
+    final db = await MasterSqlDB.databases;
+
+    return db['bepari']!.query(
+      MasterSqlDB.bepariTable,
+      where: "partyName = ?",
+      whereArgs: [bepariName],
+    );
+  }
+
 // ------------------------ CLEAR DB ------------------------------------------
 
   clearDb(String type) async {

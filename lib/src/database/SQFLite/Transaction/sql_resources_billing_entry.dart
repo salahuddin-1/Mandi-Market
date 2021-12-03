@@ -88,6 +88,21 @@ class BillingEntriesSQLResources {
     );
   }
 
+// --------------------- GET BILLS BY BEPARI NAME ------------------------------
+
+  static Future<List<Map<String, dynamic>>> getBillsByBepariName(
+    String bepariName,
+  ) async {
+    final db = await BillingEntrySqlDB.database;
+
+    return db.query(
+      BillingEntrySqlDB.table,
+      where: "bepariName = ?",
+      whereArgs: [bepariName],
+    );
+  }
+// -----------------------------------------------------------------------------
+
 // ---------------------- DELETE ALL -------------------------------------------
   static deleteAllBillingEntries() async {
     final db = await BillingEntrySqlDB.database;

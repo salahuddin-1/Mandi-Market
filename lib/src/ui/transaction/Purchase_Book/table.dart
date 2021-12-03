@@ -34,9 +34,12 @@ class _PurchaseBookTableState extends State<PurchaseBookTable> {
   final _sagaBookBloc = new SagaBookBloc();
   late final PurchaseBookStreamTable _purchaseBookStreamTable;
   late final IsCalcParamsNullBLOC _isCalcParamsNullBLOC;
+  late double _fontSize;
 
   @override
   void initState() {
+    _fontSize = 9.sp;
+
     _purchaseBookStreamTable = PurchaseBookStreamTable(
       fromDateHash: widget.fromDateHash,
       toDateHash: widget.toDateHash,
@@ -328,8 +331,6 @@ class _PurchaseBookTableState extends State<PurchaseBookTable> {
       ),
     );
   }
-
-  double _fontSize = 13;
 }
 
 // ---------------- Dragable Scrollable Sheet ---------------------
@@ -352,10 +353,10 @@ class _DraggableScrollableSheet extends StatelessWidget {
       minChildSize: 0.05,
       builder: (context, cntrl) => Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
+          // borderRadius: BorderRadius.only(
+          //   topLeft: Radius.circular(20),
+          //   topRight: Radius.circular(20),
+          // ),
           color: CYAN900,
         ),
         child: ListView(
@@ -387,7 +388,7 @@ class _DraggableScrollableSheet extends StatelessWidget {
                         "No. of Units :  ",
                         style: TextStyle(
                           fontSize: 15.sp,
-                          fontWeight: FontWeight.bold,
+                          color: WHITE,
                         ),
                       ),
                       StreamBuilder<int>(
@@ -399,7 +400,7 @@ class _DraggableScrollableSheet extends StatelessWidget {
                                 "${snapshot.data}",
                                 style: TextStyle(
                                   fontSize: 15.sp,
-                                  fontWeight: FontWeight.bold,
+                                  color: WHITE,
                                 ),
                               ),
                             ),
@@ -415,7 +416,7 @@ class _DraggableScrollableSheet extends StatelessWidget {
                         "Gross Amount :  ",
                         style: TextStyle(
                           fontSize: 15.sp,
-                          fontWeight: FontWeight.bold,
+                          color: WHITE,
                         ),
                       ),
                       StreamBuilder<double>(
@@ -427,7 +428,7 @@ class _DraggableScrollableSheet extends StatelessWidget {
                                 "${snapshot.data}",
                                 style: TextStyle(
                                   fontSize: 15.sp,
-                                  fontWeight: FontWeight.bold,
+                                  color: WHITE,
                                 ),
                               ),
                             ),

@@ -9,6 +9,8 @@ class MasterModel {
   String remark;
   int? documentId;
   String? timestamp;
+  String openingBalancePaid;
+  String openingBalanceReceived;
 
   MasterModel({
     required this.partyName,
@@ -19,6 +21,8 @@ class MasterModel {
     required this.remark,
     required this.documentId,
     this.timestamp,
+    required this.openingBalancePaid,
+    required this.openingBalanceReceived,
   });
 
   factory MasterModel.fromDocument(DocumentSnapshot doc) {
@@ -31,6 +35,8 @@ class MasterModel {
       remark: doc['remark'],
       timestamp: doc['timestamp'],
       documentId: doc['documentId'],
+      openingBalancePaid: doc['openingBalancePaid'],
+      openingBalanceReceived: doc['openingBalanceReceived'],
     );
 
     return masterModel;
@@ -50,6 +56,8 @@ class MasterModel {
     map['debitOrCredit'] = this.debitOrCredit;
     map['remark'] = this.remark;
     map['documentId'] = this.documentId;
+    map['openingBalancePaid'] = this.openingBalancePaid;
+    map['openingBalanceReceived'] = this.openingBalanceReceived;
 
     return map;
   }
@@ -64,6 +72,8 @@ class MasterModel {
       remark: map['remark'],
       timestamp: map['timestamp'],
       documentId: map['documentId'],
+      openingBalancePaid: map['openingBalancePaid'],
+      openingBalanceReceived: map['openingBalanceReceived'],
     );
   }
 

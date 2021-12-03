@@ -22,6 +22,10 @@ class PaymentBepariSqlDB {
   static final String _colOpeningBalance = 'openingBalance';
   static final String _colBills = 'bills';
   static final String _colPaidAmt = 'paidAmount';
+  static final String _colReceivedAmt = 'receivedAmount';
+  static final String _colReceivingAmt = 'receivingAmount';
+  static final String _colBalanceAmtToPay = 'balanceAmountToPay';
+  static final String _colBalanceAmountToReceive = 'balanceAmountToReceive';
   static final String _colPendingAmt = 'pendingAmount';
   static final String _colDebitOrCredit = 'debitOrCredit';
 
@@ -53,7 +57,11 @@ class PaymentBepariSqlDB {
             $_colBills TEXT,
             $_colPaidAmt TEXT,
             $_colPendingAmt TEXT,
-            $_colDebitOrCredit TEXT
+            $_colDebitOrCredit TEXT,
+            $_colReceivedAmt TEXT,
+            $_colReceivingAmt TEXT,
+            $_colBalanceAmtToPay TEXT,
+            $_colBalanceAmountToReceive TEXT
            )
           ''',
         );

@@ -32,6 +32,10 @@ class HandleMaster {
         return;
       }
 
+      if (masterModel.debitOrCredit.toLowerCase() == "debit") {
+        masterModel.openingBalancePaid = masterModel.openingBalance.toString();
+      }
+
       await MasterSqlResources().insertEntry(
         map: masterModel.toMap(),
         type: type,
@@ -46,10 +50,11 @@ class HandleMaster {
         map: masterModel.toMap(),
       );
 
-      // ADD PAYMENT TO BEPARI
+// ------------------ ADD PAYMENT TO BEPARI------------
       if (type == 'bepari') {
         await _addBillInPaymentToBepari(masterModel);
       }
+// ---------------------------------------------------
 
       ShowToast.toast(
         'Party Added Successfully',
@@ -69,6 +74,8 @@ class HandleMaster {
   Future<int> _addBillInPaymentToBepari(MasterModel masterModel) async {
     final Map<String, dynamic> billMap =
         PaymentBepariInsertEntry.addEntryThroughMaster(masterModel);
+
+    print(billMap);
 
     return await PaymentBepariSQLResources.insertEntry(billMap);
   }

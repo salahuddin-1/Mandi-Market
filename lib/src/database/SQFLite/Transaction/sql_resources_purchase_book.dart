@@ -175,4 +175,11 @@ class _HelperQueries {
 
     // For descending order -> NOCASE DESC
   }
+
+  createANewTableAfterDBHasCreated() {
+    var alterTable = '''
+      ALTER TABLE tableName
+      ADD COLUMN colName TEXT
+      ''';
+  }
 }

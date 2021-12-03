@@ -309,6 +309,8 @@ class _EditPartiesInMasterState extends State<EditPartiesInMaster> {
         openingBalance: int.tryParse(_openingBalController.text.trim())!,
         remark: _remarkController.text.trim(),
         documentId: int.tryParse(widget.docId.toString())!,
+        openingBalancePaid: '0',
+        openingBalanceReceived: '0',
       );
 
       HandleMaster(context).updateParty(

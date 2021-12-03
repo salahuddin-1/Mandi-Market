@@ -192,3 +192,23 @@ class ErrorText extends StatelessWidget {
     );
   }
 }
+
+class RetryCustom extends StatelessWidget {
+  final Function onPressed;
+  const RetryCustom({
+    Key? key,
+    required this.onPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: TextButton(
+        onPressed: () {
+          onPressed();
+        },
+        child: Text("Something unexpected happened"),
+      ),
+    );
+  }
+}

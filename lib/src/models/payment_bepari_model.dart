@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:mandimarket/src/models/billing_entry_model.dart';
+import 'package:mandimarket/src/ui/Master1/master_model.dart';
+
 class PaymentBepariModel {
   int? documentId;
   String? timestamp;
@@ -10,6 +13,12 @@ class PaymentBepariModel {
   List<Bills>? bills;
   String? paidAmount;
   String? pendingAmount;
+  String? receivingAmount;
+  String? receivedAmount;
+  String? balAmtToPay;
+  String? balAmtToReceive;
+  List<BillingEntryModel>? billEntryModels;
+  MasterModel? masterModel;
 
   PaymentBepariModel({
     this.documentId,
@@ -21,6 +30,12 @@ class PaymentBepariModel {
     this.bills,
     this.paidAmount,
     this.pendingAmount,
+    this.receivingAmount,
+    this.receivedAmount,
+    this.balAmtToPay,
+    this.balAmtToReceive,
+    this.billEntryModels,
+    this.masterModel,
   });
 
   PaymentBepariModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +46,10 @@ class PaymentBepariModel {
     this.bepariName = json['bepariName'];
     this.paidAmount = json['paidAmount'];
     this.pendingAmount = json['pendingAmount'];
+    this.receivedAmount = json['receivedAmount'];
+    this.receivingAmount = json['receivingAmount'];
+    this.balAmtToPay = json['balanceAmountToPay'];
+    this.balAmtToReceive = json['balanceAmountToReceive'];
 
     List<dynamic> bills = jsonDecode(json['bills']);
 
@@ -53,30 +72,46 @@ class PaymentBepariModel {
     data['bepariName'] = this.bepariName;
     data['paidAmount'] = this.paidAmount;
     data['pendingAmount'] = this.pendingAmount;
+    data['receivingAmount'] = this.receivingAmount;
+    data['receivedAmount'] = this.receivedAmount;
+    data['balanceAmountToPay'] = this.balAmtToPay;
+    data['balanceAmountToReceive'] = this.balAmtToReceive;
     return data;
   }
 }
 
 class OpeningBalance {
-  String? pending;
-  String? paid;
+  String? amount;
+  String? clearedAmount;
+  String? balance;
   String? date;
+  bool? isReceiving;
 
-  OpeningBalance({this.pending, this.paid, this.date});
+  OpeningBalance({
+    this.amount,
+    this.clearedAmount,
+    this.date,
+    this.isReceiving,
+    this.balance,
+  });
 
   factory OpeningBalance.fromJson(Map<String, dynamic> json) {
     return OpeningBalance(
-      pending: json['pending'],
-      paid: json['paid'],
+      amount: json['amount'],
+      clearedAmount: json['clearedAmount'],
       date: json['date'],
+      isReceiving: json['isReceiving'],
+      balance: json['balance'],
     );
   }
 
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['pending'] = this.pending;
-    data['paid'] = this.paid;
+    data['amount'] = this.amount;
+    data['clearedAmount'] = this.clearedAmount;
     data['date'] = this.date;
+    data['isReceiving'] = this.isReceiving;
+    data['balance'] = this.balance;
     return data;
   }
 }
@@ -84,12 +119,14 @@ class OpeningBalance {
 class Bills {
   String? pending;
   String? paid;
+  String? balance;
   String? date;
 
   Bills({
     this.pending,
     this.paid,
     this.date,
+    this.balance,
   });
 
   factory Bills.fromJson(Map<String, dynamic> json) {
@@ -97,6 +134,7 @@ class Bills {
       pending: json['pending'],
       paid: json['paid'],
       date: json['date'],
+      balance: json['balance'],
     );
   }
 
@@ -105,6 +143,7 @@ class Bills {
     data['pending'] = this.pending;
     data['paid'] = this.paid;
     data['date'] = this.date;
+    data['balance'] = this.balance;
     return data;
   }
 }

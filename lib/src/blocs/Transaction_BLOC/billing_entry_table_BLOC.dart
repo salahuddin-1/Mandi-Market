@@ -67,19 +67,10 @@ class BillingEntryTableBLOC {
         map: billingEntryModel.toMap(),
       );
 
-// ---------------------- Update Bill
+// ---------------------- Update Bill ---------------------
+      await _updateBillInPaymentBepari(billingEntryModel);
+// ---------------------------------------------------------
 
-      final billMap =
-          await PaymentBepariInsertEntry.updateEntryThroughBillingEntry(
-        billingEntryModel,
-        bepariName: billingEntryModel.bepariName,
-      );
-
-      await PaymentBepariSQLResources.updateEntry(
-        billMap,
-        bepariName: billingEntryModel.bepariName,
-      );
-// ----------------------
       await getEntries();
 
       Pop(context!);
@@ -89,26 +80,22 @@ class BillingEntryTableBLOC {
         context,
         3,
       );
-
-      print(billingEntryModel.documentId);
     } catch (e) {
       ErrorCustom.catchError(context!, e.toString());
     }
   }
 
-  // _addEntryInPaymentToBepari() {
-  //   {
-  //           'documentId': map['documentId'],
-  //           'timestamp': DateTime.now().toIso8601String(),
-  //           'dateHash': 0,
-  //           'selectedTimestamp': '',
-  //           'bepariName': map['bepariName'],
-  //           'openingBalance': '',
-  //           'bills': jsonEncode(dataBills[map['bepariName']]),
-  //           'paid Amount': '',
-  //           'pendingAmount': '',
-  //         };
-  // }
+  Future<void> _updateBillInPaymentBepari(
+    BillingEntryModel billingEntryModel,
+  ) async {
+    final billMap = await UpdateEntryThroughBill(billingEntryModel.bepariName)
+        .updateEntryThroughBill(billingEntryModel);
+
+    await PaymentBepariSQLResources.updateEntry(
+      billMap,
+      bepariName: billingEntryModel.bepariName,
+    );
+  }
 
 // ------------------------ UPDATE ENTRY ---------------------------------------
   Future<void> updateEntry({
@@ -130,6 +117,8 @@ class BillingEntryTableBLOC {
         docID: documentId.toString(),
         map: map,
       );
+
+      // await _updateBillInPaymentBepari(BillingEntryModel.fromJson(map));
 
       await getEntries();
 

@@ -43,24 +43,6 @@ class PaymentBepariSQLResources {
     );
   }
 
-// -----------------------------------------------------------------------------
-
-  static Future<Map<String, dynamic>?> getBills(String bepariName) async {
-    final db = await PaymentBepariSqlDB.database;
-
-    final listMap = await db.rawQuery(
-      '''
-        SELECT bills, pendingAmount, paidAmount
-        FROM ${PaymentBepariSqlDB.table}
-        WHERE bepariName == "$bepariName"
-      ''',
-    );
-
-    if (listMap.isEmpty) return null;
-
-    return listMap[0];
-  }
-
 // ------------------------ GET BILL BY BEPARI NAME ----------------------------
   static Future<Map<String, dynamic>?> getBillByBepariName(
     String bepariName,

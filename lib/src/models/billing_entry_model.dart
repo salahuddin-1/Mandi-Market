@@ -19,6 +19,7 @@ class BillingEntryModel {
   String description;
   String miscExpenses;
   int documentId;
+  String billPaid;
 
   BillingEntryModel({
     required this.selectedTimestamp,
@@ -41,6 +42,7 @@ class BillingEntryModel {
     required this.description,
     required this.miscExpenses,
     required this.documentId,
+    required this.billPaid,
   });
 
   factory BillingEntryModel.fromJson(Map<String, dynamic> json) {
@@ -65,6 +67,7 @@ class BillingEntryModel {
       description: json['description'],
       miscExpenses: json['miscExpenses'],
       documentId: json['documentId'],
+      billPaid: json['billPaid'],
     );
   }
 
@@ -90,6 +93,7 @@ class BillingEntryModel {
     data['description'] = this.description;
     data['miscExpenses'] = this.miscExpenses;
     data['documentId'] = this.documentId;
+    data['billPaid'] = this.billPaid;
     return data;
   }
 }
