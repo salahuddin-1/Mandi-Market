@@ -51,17 +51,44 @@ class PaymentBepariModel {
     this.balAmtToPay = json['balanceAmountToPay'];
     this.balAmtToReceive = json['balanceAmountToReceive'];
 
-    List<dynamic> bills = jsonDecode(json['bills']);
+    // this.billEntryModels =
 
-    if (bills.isNotEmpty) {
-      this.bills = bills.map((map) => Bills.fromJson(map)).toList();
-    }
+    // List<dynamic> bills = jsonDecode(json['bills']);
 
-    Map<String, dynamic> openingBalMap = jsonDecode(json['openingBalance']);
-    final openingBalModel = OpeningBalance.fromJson(openingBalMap);
+    // if (bills.isNotEmpty) {
+    //   this.bills = bills.map((map) => Bills.fromJson(map)).toList();
+    // }
 
-    this.openingBalance = openingBalModel;
+    // Map<String, dynamic> openingBalMap = jsonDecode(json['openingBalance']);
+    // final openingBalModel = OpeningBalance.fromJson(openingBalMap);
+
+    // this.openingBalance = openingBalModel;
   }
+
+  // factory PaymentBepariModel.fromJson(Map<String, dynamic> json) {
+  //   List<dynamic> bills = jsonDecode(json['bills']);
+
+  //   bills = bills.map((map) => Bills.fromJson(map)).toList();
+
+  //   Map<String, dynamic> openingBalMap = jsonDecode(json['openingBalance']);
+  //   final openingBalModel = OpeningBalance.fromJson(openingBalMap);
+
+  //   return PaymentBepariModel(
+  //     documentId: json['documentId'],
+  //     timestamp: json['timestamp'],
+  //     selectedTimestamp: json['selectedTimestamp'],
+  //     dateHash: json['dateHash'],
+  //     bepariName: json['bepariName'],
+  //     paidAmount: json['paidAmount'],
+  //     pendingAmount: json['pendingAmount'],
+  //     receivedAmount: json['receivedAmount'],
+  //     receivingAmount: json['receivingAmount'],
+  //     balAmtToPay: json['balanceAmountToPay'],
+  //     balAmtToReceive: json['balanceAmountToReceive'],
+  //     bills: bills as List<Bills>,
+  //     openingBalance: openingBalModel,
+  //   );
+  // }
 
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -76,6 +103,20 @@ class PaymentBepariModel {
     data['receivedAmount'] = this.receivedAmount;
     data['balanceAmountToPay'] = this.balAmtToPay;
     data['balanceAmountToReceive'] = this.balAmtToReceive;
+
+    if (this.billEntryModels != null) {
+      final billingEntryMap = this
+          .billEntryModels!
+          .map((billingEntryModel) => billingEntryModel.toMap())
+          .toList();
+
+      data['billEntryModels'] = jsonEncode(billingEntryMap);
+    }
+
+    if (masterModel != null) {
+      data['masterModel'] = jsonEncode(masterModel!.toMap());
+    }
+
     return data;
   }
 }

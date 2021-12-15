@@ -163,8 +163,8 @@ class _PaymentBepariState extends State<PaymentBepari> {
                                             Push(
                                               context,
                                               pushTo: ViewEditPaymentBepari(
-                                                paymentBepariModel:
-                                                    _paymentBepariModel,
+                                                bepariName: _paymentBepariModel
+                                                    .bepariName!,
                                                 getEntriesPaymentBepariBLOC:
                                                     _getEntriesPaymentBepariBLOC,
                                               ),

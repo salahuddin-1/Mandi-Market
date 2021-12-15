@@ -62,6 +62,14 @@ class PaymentBepariSQLResources {
     return listMap[0];
   }
 
+// ----------- GET PAYMENT BEPARI ENTRY FOR EDITING ----------------------------
+
+  static Future<Map<String, dynamic>?> getPaymentBepariEntry(
+    String bepariName,
+  ) async {
+    return getBillByBepariName(bepariName);
+  }
+
 // ------------------ DELETE ALL -----------------------------------------------
 
   static Future<int> deleteAll() async {

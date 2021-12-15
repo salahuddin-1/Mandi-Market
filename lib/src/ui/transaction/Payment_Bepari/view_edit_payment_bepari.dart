@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mandimarket/src/blocs/Transaction_BLOC/Payment_Bepari_BLOC/calculate_bills_BLOC.dart';
 import 'package:mandimarket/src/blocs/Transaction_BLOC/Payment_Bepari_BLOC/get_entries_payment_bepari_BLOC.dart';
+import 'package:mandimarket/src/blocs/Transaction_BLOC/Payment_Bepari_BLOC/view_edit_bloc.dart';
 import 'package:mandimarket/src/constants/colors.dart';
 import 'package:mandimarket/src/models/payment_bepari_model.dart';
 import 'package:mandimarket/src/resources/format_date.dart';
@@ -13,13 +14,13 @@ import 'package:mandimarket/src/widgets/select_date.dart';
 import 'package:sizer/sizer.dart';
 
 class ViewEditPaymentBepari extends StatefulWidget {
-  final PaymentBepariModel paymentBepariModel;
+  final String bepariName;
   final GetEntriesPaymentBepariBLOC getEntriesPaymentBepariBLOC;
 
   const ViewEditPaymentBepari({
     Key? key,
-    required this.paymentBepariModel,
     required this.getEntriesPaymentBepariBLOC,
+    required this.bepariName,
   }) : super(key: key);
 
   @override
@@ -47,11 +48,15 @@ class _ViewEditPaymentBepariState extends State<ViewEditPaymentBepari>
   Duration _duration = Duration(milliseconds: 500);
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
 
+  // States
+  late PaymentCheckedBLOC _paymentCheckedBLOC;
+
+  // Stack
+
   @override
   void initState() {
-    _calculateBillsBLOC = CalculateBillsBLOC(
-      widget.paymentBepariModel,
-    );
+    // This BLOC is for getting bills and opening balance
+    _calculateBillsBLOC = CalculateBillsBLOC(widget.bepariName);
 
     _dateCntrl = new TextEditingController();
     _bepariNameCntrl = new TextEditingController();
@@ -67,18 +72,23 @@ class _ViewEditPaymentBepariState extends State<ViewEditPaymentBepari>
     // Initially the draggable will be slided up
     _controller.forward();
 
+    _paymentCheckedBLOC = PaymentCheckedBLOC();
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: _appbar(),
       body: StreamBuilder<PaymentBepariModel>(
           stream: _calculateBillsBLOC.stream,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               // Assigning Data
+
+              print('build');
 
               paymentBepariModel = snapshot.data!;
 
@@ -241,7 +251,7 @@ class _ViewEditPaymentBepariState extends State<ViewEditPaymentBepari>
     return Colors.green[700]!;
   }
 
-  _showAmountToPayTextfield() {
+  Widget _showAmountToPayTextfield() {
     if (showPayingWidgets) {
       return _amountToPayTextField();
     }
@@ -335,18 +345,32 @@ class _ViewEditPaymentBepariState extends State<ViewEditPaymentBepari>
     );
   }
 
-  Padding _enterPayingTextField() {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: 20,
-      ),
-      child: TextFormField(
-        controller: _paymentCntrl,
-        decoration: InputDecoration(
-          labelText: "Amount Paid",
-        ),
-      ),
-    );
+  StreamBuilder<bool> _enterPayingTextField() {
+    return StreamBuilder<bool>(
+        stream: _paymentCheckedBLOC.readOnlyTextfieldStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final readOnly = snapshot.data;
+
+            return Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 20,
+              ),
+              child: Container(
+                color: readOnly! ? DISABLEDCOLOR : Colors.transparent,
+                child: TextFormField(
+                  readOnly: readOnly,
+                  controller: _paymentCntrl,
+                  decoration: InputDecoration(
+                    labelText: "Amount Paid",
+                  ),
+                ),
+              ),
+            );
+          }
+
+          return SizedBox.shrink();
+        });
   }
 
   Padding _enterreceivingTextField() {
@@ -392,10 +416,14 @@ class _ViewEditPaymentBepariState extends State<ViewEditPaymentBepari>
     // Set isReceiving to true to show receving fields
     if (double.parse(paymentBepariModel!.balAmtToReceive!).round() != 0) {
       showRecevingWidgets = true;
+    } else {
+      showRecevingWidgets = false;
     }
 
     if (paymentBepariModel!.masterModel!.debitOrCredit == "Debit") {
       isReceiving = true;
+    } else {
+      isReceiving = false;
     }
 
     if (double.parse(paymentBepariModel!.balAmtToPay!).round() != 0) {
@@ -403,8 +431,49 @@ class _ViewEditPaymentBepariState extends State<ViewEditPaymentBepari>
     }
   }
 
+  PaymentBepariModel _getANewInstance(PaymentBepariModel paymentBepariModel) {
+    PaymentBepariModel newModel = PaymentBepariModel(
+      documentId: paymentBepariModel.documentId,
+      timestamp: paymentBepariModel.timestamp,
+      selectedTimestamp: paymentBepariModel.selectedTimestamp,
+      dateHash: paymentBepariModel.dateHash,
+      bepariName: paymentBepariModel.bepariName,
+      paidAmount: paymentBepariModel.paidAmount,
+      pendingAmount: paymentBepariModel.pendingAmount,
+      receivingAmount: paymentBepariModel.receivingAmount,
+      receivedAmount: paymentBepariModel.receivedAmount,
+      balAmtToPay: paymentBepariModel.balAmtToPay,
+      balAmtToReceive: paymentBepariModel.balAmtToReceive,
+      masterModel: paymentBepariModel.masterModel,
+      billEntryModels: paymentBepariModel.billEntryModels,
+    );
+
+    return newModel;
+  }
+
+  _checkReceived() async {
+    if (_receivingCntrl.text.isEmpty) return;
+
+    double receivingAmount = double.parse(
+      _receivingCntrl.text.trim(),
+    );
+
+    PaymentBepariModel paymentBepariModel =
+        await _calculateBillsBLOC.stream.last;
+
+    paymentBepariModel.receivedAmount = receivingAmount.toString();
+
+    _calculateBillsBLOC.sink(
+      _getANewInstance(paymentBepariModel),
+    );
+  }
+
 // CLICK ON CHECK
   _check() {
+    // -------- Freeze textfield
+    _disableCheckButton();
+    _setUndoParameters();
+
     late PaymentBepariModel model;
 
     if (_paymentCntrl.text.isEmpty) return;
@@ -511,7 +580,7 @@ class _ViewEditPaymentBepariState extends State<ViewEditPaymentBepari>
     // SINK
     _calculateBillsBLOC.sink(model);
 
-    print(dataMap);
+    // print(dataMap);
 
     widget.getEntriesPaymentBepariBLOC.getEntries();
   }
@@ -562,30 +631,54 @@ class _ViewEditPaymentBepariState extends State<ViewEditPaymentBepari>
     return 0;
   }
 
+  // Freeze the textfield and disable check button
+  void _disableCheckButton() {
+    _paymentCheckedBLOC.sink(true);
+  }
+
+  void _setUndoParameters() async {
+    paymentBepariModel!.billEntryModels!.forEach(
+      (billModel) {
+        print("From stack before pushing" + billModel.billPaid);
+      },
+    );
+  }
+
+  void _undo() async {
+    _setAttributes();
+    _paymentCheckedBLOC.sink(false);
+    await _calculateBillsBLOC.init();
+  }
+
 // -----------------------------------------------------------------------------
 
-  _appbar() {
+  AppBar _appbar() {
     return AppBarCustom(context).appbar(
       title: "View ",
       actions: [
-        TextButton(
+        // UNDO Button
+        _UndoButton(
+          paymentCheckedBLOC: _paymentCheckedBLOC,
+          onPressed: _undo,
+        ),
+
+        // CHECK Button
+        _CheckButton(
+          paymentCheckedBLOC: _paymentCheckedBLOC,
           onPressed: () {
             _check();
           },
-          child: Text(
-            "Check",
-            style: TextStyle(
-              color: BLACK,
-              fontWeight: FontWeight.w300,
-              fontSize: 10.sp,
-            ),
-          ),
         ),
+
+        // ICON BUTTON TICK
         IconButton(
           onPressed: () {
-            if (_controller.isDismissed)
-              _controller.forward();
-            else if (_controller.isCompleted) _controller.reverse();
+            _checkReceived();
+
+            // _seeTheStack();
+            // if (_controller.isDismissed) {
+            //   _controller.forward();
+            // } else if (_controller.isCompleted) _controller.reverse();
           },
           icon: Icon(Icons.check),
         ),
@@ -599,8 +692,83 @@ class _ViewEditPaymentBepariState extends State<ViewEditPaymentBepari>
     _calculateBillsBLOC.dispose();
     _bepariNameCntrl.dispose();
     _paymentCntrl.dispose();
+    _paymentCheckedBLOC.dispose();
 
     super.dispose();
+  }
+}
+
+// --------------------- UNDO Button -------------------------------------------
+
+class _UndoButton extends StatelessWidget {
+  const _UndoButton({
+    required this.paymentCheckedBLOC,
+    required this.onPressed,
+  });
+
+  final PaymentCheckedBLOC paymentCheckedBLOC;
+  final Function onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<bool>(
+        stream: paymentCheckedBLOC.undoButtonStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final isEnabled = snapshot.data;
+
+            return TextButton(
+              onPressed: isEnabled! ? () => onPressed() : null,
+              child: Text(
+                "Undo",
+                style: TextStyle(
+                  color: isEnabled ? BLACK : Colors.black45,
+                  fontWeight: FontWeight.w300,
+                  fontSize: 10.sp,
+                ),
+              ),
+            );
+          }
+
+          return const SizedBox.shrink();
+        });
+  }
+}
+
+// ------------------------ CHECK Button ---------------------------------------
+
+class _CheckButton extends StatelessWidget {
+  final PaymentCheckedBLOC paymentCheckedBLOC;
+  final Function onPressed;
+
+  const _CheckButton({
+    Key? key,
+    required this.paymentCheckedBLOC,
+    required this.onPressed,
+  }) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<bool>(
+        stream: this.paymentCheckedBLOC.stream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final checked = snapshot.data;
+
+            return TextButton(
+              onPressed: checked! ? null : () => this.onPressed(),
+              child: Text(
+                "Check",
+                style: TextStyle(
+                  color: checked ? Colors.black45 : BLACK,
+                  fontWeight: FontWeight.w300,
+                  fontSize: 10.sp,
+                ),
+              ),
+            );
+          }
+
+          return const SizedBox.shrink();
+        });
   }
 }
 
@@ -692,7 +860,7 @@ class _DraggableScrollableSheetCustom extends StatelessWidget {
     );
   }
 
-  _showPayingWidgets() {
+  Widget _showPayingWidgets() {
     if (showPayingWidgets) {
       return _payingWidgets();
     }

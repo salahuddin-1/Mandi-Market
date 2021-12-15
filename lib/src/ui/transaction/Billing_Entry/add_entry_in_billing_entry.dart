@@ -340,7 +340,7 @@ class _AddEntryInBillingEntryState extends State<AddEntryInBillingEntry> {
         Expanded(
           child: Container(
             margin: EdgeInsets.only(top: 5),
-            color: Colors.grey[100],
+            color: DISABLEDCOLOR,
             child: TextFormField(
               readOnly: true,
               controller: _subAmountCntrl,
@@ -355,7 +355,7 @@ class _AddEntryInBillingEntryState extends State<AddEntryInBillingEntry> {
         Expanded(
           child: Container(
             margin: EdgeInsets.only(top: 5),
-            color: Colors.grey[100],
+            color: DISABLEDCOLOR,
             child: TextFormField(
               readOnly: true,
               controller: _netAmountCntrl,
@@ -377,7 +377,7 @@ class _AddEntryInBillingEntryState extends State<AddEntryInBillingEntry> {
         Expanded(
           child: Container(
             margin: EdgeInsets.only(top: 5),
-            color: Colors.grey[100],
+            color: DISABLEDCOLOR,
             child: TextFormField(
               readOnly: true,
               controller: _unitsCntrl,
@@ -392,7 +392,7 @@ class _AddEntryInBillingEntryState extends State<AddEntryInBillingEntry> {
         Expanded(
           child: Container(
             margin: EdgeInsets.only(top: 5),
-            color: Colors.grey[100],
+            color: DISABLEDCOLOR,
             child: TextFormField(
               readOnly: true,
               controller: _discountCntrl,
@@ -414,7 +414,7 @@ class _AddEntryInBillingEntryState extends State<AddEntryInBillingEntry> {
         Expanded(
           child: Container(
             margin: EdgeInsets.only(top: 5),
-            color: Colors.grey[100],
+            color: DISABLEDCOLOR,
             child: TextFormField(
               readOnly: true,
               controller: _dalaliCntrl,
@@ -429,7 +429,7 @@ class _AddEntryInBillingEntryState extends State<AddEntryInBillingEntry> {
         Expanded(
           child: Container(
             margin: EdgeInsets.only(top: 5),
-            color: Colors.grey[100],
+            color: DISABLEDCOLOR,
             child: TextFormField(
               readOnly: true,
               controller: _karkuniCntrl,

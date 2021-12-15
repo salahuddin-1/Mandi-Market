@@ -5,6 +5,7 @@ import 'package:mandimarket/src/blocs/Transaction_BLOC/purchase_book_get_user_bl
 import 'package:mandimarket/src/blocs/select_date_bloc.dart';
 import 'package:mandimarket/src/blocs/show_circular_progress_bloc.dart';
 import 'package:mandimarket/src/constants/calculate_date_hash.dart';
+import 'package:mandimarket/src/constants/colors.dart';
 import 'package:mandimarket/src/database/SQFLite/Transaction/sql_resources_purchase_book.dart';
 import 'package:mandimarket/src/dependency_injection/user_credentials.dart';
 import 'package:mandimarket/src/models/purchase_book_model.dart';
@@ -365,7 +366,7 @@ class _AddEntryInPurchasebookState extends State<AddEntryInPurchasebook> {
       children: [
         Expanded(
           child: Container(
-            color: Colors.grey[100],
+            color: DISABLEDCOLOR,
             child: TextFormField(
               style: TextStyle(
                 fontWeight: FontWeight.bold,
@@ -385,7 +386,7 @@ class _AddEntryInPurchasebookState extends State<AddEntryInPurchasebook> {
         SizedBox(width: 5.w),
         Expanded(
             child: Container(
-          color: Colors.grey[100],
+          color: DISABLEDCOLOR,
           child: TextFormField(
             style: TextStyle(
               fontWeight: FontWeight.bold,
