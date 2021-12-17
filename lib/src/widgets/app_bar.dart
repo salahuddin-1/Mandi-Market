@@ -41,6 +41,7 @@ class AppBarCustom {
     Function? onPressedAdd,
   }) {
     return AppBar(
+      backgroundColor: CYAN900,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(40),
@@ -57,6 +58,7 @@ class AppBarCustom {
         title,
         style: TextStyle(
           color: Colors.white,
+          fontSize: 12.sp,
         ),
       ),
       centerTitle: false,

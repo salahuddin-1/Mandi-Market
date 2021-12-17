@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mandimarket/src/ui/home/homepage.dart';
@@ -24,9 +23,10 @@ class MyApp extends StatelessWidget {
   ThemeData _themeData(BuildContext context) {
     return ThemeData(
       primaryColor: CYAN900,
-      accentColor: CYAN900,
+      colorScheme: ColorScheme.fromSwatch(
+        accentColor: CYAN900,
+      ),
       scaffoldBackgroundColor: Colors.white,
-      buttonColor: CYAN900,
       textTheme: _textTheme(context),
       textButtonTheme: _textButtonTheme(),
       appBarTheme: _appbarTheme(),
@@ -80,11 +80,9 @@ class MyApp extends StatelessWidget {
       titleTextStyle: GoogleFonts.raleway(
         color: WHITE,
       ),
-      textTheme: TextTheme(
-        headline6: GoogleFonts.raleway(
-          color: WHITE,
-          fontSize: 14.sp,
-        ),
+      toolbarTextStyle: GoogleFonts.raleway(
+        color: WHITE,
+        fontSize: 14.sp,
       ),
       iconTheme: IconThemeData(
         color: BLACK,

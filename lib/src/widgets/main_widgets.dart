@@ -48,8 +48,10 @@ AppBar appbarMain() {
       'Mandi Market',
       style: TextStyle(
         color: WHITE,
+        fontSize: 12.sp,
       ),
     ),
     elevation: 10,
+    backgroundColor: CYAN900,
   );
 }
