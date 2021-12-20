@@ -6,8 +6,10 @@ import 'package:mandimarket/src/blocs/Transaction_BLOC/Payment_Bepari_BLOC/view_
 import 'package:mandimarket/src/constants/colors.dart';
 import 'package:mandimarket/src/models/payment_bepari_model.dart';
 import 'package:mandimarket/src/resources/format_date.dart';
+import 'package:mandimarket/src/resources/navigation.dart';
 import 'package:mandimarket/src/widgets/app_bar.dart';
 import 'package:mandimarket/src/widgets/circular_progress.dart';
+import 'package:mandimarket/src/widgets/rupees_prefix.dart';
 import 'package:mandimarket/src/widgets/select_date.dart';
 
 import 'package:sizer/sizer.dart';
@@ -76,6 +78,21 @@ class _ViewEditPaymentBepariState extends State<ViewEditPaymentBepari>
     super.initState();
   }
 
+  late BalanceAmount balanceAmount;
+
+  _setInitialBalanceAmount() {
+    if (paymentBepariModel != null) {
+      balanceAmount = BalanceAmount(
+        balanceAmountToPay: paymentBepariModel!.balAmtToPay,
+        balanceAmountToReceive: paymentBepariModel!.balAmtToReceive,
+        amountToPay: paymentBepariModel!.balAmtToPay,
+        amountPaid: '0',
+        amountToReceive: paymentBepariModel!.balAmtToReceive,
+        amountReceived: '0',
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,6 +109,7 @@ class _ViewEditPaymentBepariState extends State<ViewEditPaymentBepari>
               paymentBepariModel = snapshot.data!;
 
               _setAttributes();
+              _setInitialBalanceAmount();
 
               return Stack(
                 fit: StackFit.expand,
@@ -649,6 +667,264 @@ class _ViewEditPaymentBepariState extends State<ViewEditPaymentBepari>
     await _calculateBillsBLOC.init();
   }
 
+  void _whenChecked() {
+    BalanceAmount balanceAmount = _calculateBalanceAmountLeft();
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return SimpleDialog(
+          children: [
+            _SimpleDialogChild(
+              leading: 'Amount to Pay : ',
+              trailing: rupeesPrefix(
+                balanceAmount.amountToPay!,
+              ),
+            ),
+            _SimpleDialogChild(
+              leading: 'Amount Paid : ',
+              trailing: rupeesPrefix(
+                balanceAmount.amountPaid!,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15),
+              child: Divider(
+                color: BLACK,
+              ),
+            ),
+            _SimpleDialogChild(
+              bold: true,
+              leading: 'Balance Amount\nto Pay : ',
+              trailing: rupeesPrefix(
+                balanceAmount.balanceAmountToPay!,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 1.h),
+              child: Divider(
+                color: BLACK,
+                thickness: 0.8,
+                height: 40,
+              ),
+            ),
+            _SimpleDialogChild(
+              leading: 'Amount to Receive : ',
+              trailing: rupeesPrefix(
+                balanceAmount.amountToReceive!,
+              ),
+            ),
+            _SimpleDialogChild(
+              leading: 'Amount Received : ',
+              trailing: rupeesPrefix(
+                balanceAmount.amountReceived!,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15),
+              child: Divider(
+                color: BLACK,
+              ),
+            ),
+            _SimpleDialogChild(
+              bold: true,
+              leading: 'Balance Amount\nto Receive : ',
+              trailing: rupeesPrefix(
+                balanceAmount.balanceAmountToReceive!,
+              ),
+            ),
+            SizedBox(height: 2.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    "Submit",
+                    style: TextStyle(
+                      fontSize: 10.sp,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Pop(dialogContext),
+                  child: Text(
+                    "Cancel",
+                    style: TextStyle(
+                      fontSize: 10.sp,
+                      color: BLACK,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 2.w),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+
+    _showAlertIfPayingAmountIsMore();
+    _showAlertIfReceivingAmountIsMore();
+  }
+
+  BalanceAmount _calculateBalanceAmountLeft() {
+    // if (_paymentCntrl.text.isEmpty)
+    //   throw Exception('Payment amount cannot be empty');
+
+    double balAmountToPay = 0;
+    double balAmountToReceive = 0;
+
+    // For Paying
+    double? payingAmount = double.tryParse(_paymentCntrl.text.trim());
+
+    if (payingAmount != null) {
+      double amountToPay = double.parse(paymentBepariModel!.balAmtToPay!);
+
+      if (payingAmount == amountToPay) {
+        balAmountToPay = payingAmount - amountToPay;
+      } else if (payingAmount < amountToPay) {
+        balAmountToPay = amountToPay - payingAmount;
+      } else if (payingAmount > amountToPay) {
+        double amountLeft = payingAmount - amountToPay;
+        balAmountToReceive = amountLeft;
+      }
+    }
+
+    // For Receiving
+    double? receivedAmount = double.tryParse(_receivingCntrl.text.trim());
+
+    if (receivedAmount != null) {
+      double amountToReceive = double.parse(
+        paymentBepariModel!.balAmtToReceive!,
+      );
+
+      if (receivedAmount == amountToReceive) {
+        balAmountToReceive = receivedAmount - amountToReceive;
+      } else if (receivedAmount < amountToReceive) {
+        balAmountToReceive =
+            balAmountToReceive + (amountToReceive - receivedAmount);
+      } else if (receivedAmount > amountToReceive) {
+        balAmountToPay = balAmountToPay + (receivedAmount - amountToReceive);
+      }
+    }
+
+    return BalanceAmount(
+      balanceAmountToPay: balAmountToPay.toString(),
+      balanceAmountToReceive: balAmountToReceive.toString(),
+      amountPaid: _paymentCntrl.text.trim(),
+      amountReceived: _receivingCntrl.text.trim(),
+      amountToPay: balanceAmount.amountToPay,
+      amountToReceive: balanceAmount.amountToReceive,
+    );
+  }
+
+  _showAlertIfPayingAmountIsMore() {
+    if (_paymentCntrl.text.isEmpty) return;
+
+    double payingAmount = double.parse(_paymentCntrl.text.trim());
+    double amountToPay = double.parse(paymentBepariModel!.balAmtToPay!);
+
+    double balanceAmount = payingAmount - amountToPay;
+
+    if (payingAmount > amountToPay) {
+      showDialog(
+        context: context,
+        builder: (dialogContext) {
+          return SimpleDialog(
+            title: Text("Information"),
+            children: [
+              SizedBox(height: 2.h),
+              Text(
+                '''
+      Amount Paid ${rupeesPrefix(payingAmount.toString())} 
+      is greater than 
+      Amount to Pay ${rupeesPrefix(amountToPay.toString())}.
+      So the remaining 
+      amount ${rupeesPrefix(balanceAmount.toString())} will 
+      be shown in 
+      Balance Amount to Receive.
+                ''',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  wordSpacing: 1.3,
+                  height: 1.2,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Pop(dialogContext),
+                    child: Text(
+                      "OK",
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 2.w),
+                ],
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  _showAlertIfReceivingAmountIsMore() {
+    if (_receivingCntrl.text.isEmpty) return;
+
+    double receivedAmount = double.parse(_receivingCntrl.text.trim());
+    double amountToReceive = double.parse(paymentBepariModel!.balAmtToReceive!);
+
+    double balanceAmount = receivedAmount - amountToReceive;
+
+    if (receivedAmount > amountToReceive) {
+      showDialog(
+        context: context,
+        builder: (dialogContext) {
+          return SimpleDialog(
+            title: Text("Information"),
+            children: [
+              SizedBox(height: 2.h),
+              Text(
+                '''
+      Amount Received ${rupeesPrefix(receivedAmount.toString())} 
+      is greater than 
+      Amount to Receive ${rupeesPrefix(amountToReceive.toString())}.
+      So the remaining 
+      amount ${rupeesPrefix(balanceAmount.toString())} will 
+      be shown in 
+      Balance Amount to Pay.
+                ''',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  wordSpacing: 1.3,
+                  height: 1.2,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Pop(dialogContext),
+                    child: Text(
+                      "OK",
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 2.w),
+                ],
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
 // -----------------------------------------------------------------------------
 
   AppBar _appbar() {
@@ -656,23 +932,24 @@ class _ViewEditPaymentBepariState extends State<ViewEditPaymentBepari>
       title: "View ",
       actions: [
         // UNDO Button
-        _UndoButton(
-          paymentCheckedBLOC: _paymentCheckedBLOC,
-          onPressed: _undo,
-        ),
+        // _UndoButton(
+        //   paymentCheckedBLOC: _paymentCheckedBLOC,
+        //   onPressed: _undo,
+        // ),
 
-        // CHECK Button
-        _CheckButton(
-          paymentCheckedBLOC: _paymentCheckedBLOC,
-          onPressed: () {
-            _check();
-          },
-        ),
+        // // CHECK Button
+        // _CheckButton(
+        //   paymentCheckedBLOC: _paymentCheckedBLOC,
+        //   onPressed: () {
+        //     _check();
+        //   },
+        // ),
 
         // ICON BUTTON TICK
         IconButton(
           onPressed: () {
-            _checkReceived();
+            _whenChecked();
+            // _checkReceived();
 
             // _seeTheStack();
             // if (_controller.isDismissed) {
@@ -959,4 +1236,54 @@ class _DraggableContainer extends StatelessWidget {
       ),
     );
   }
+}
+
+class _SimpleDialogChild extends StatelessWidget {
+  final String leading;
+  final String trailing;
+  final bool bold;
+
+  const _SimpleDialogChild({
+    Key? key,
+    required this.leading,
+    required this.trailing,
+    this.bold = false,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      dense: true,
+      leading: Text(
+        leading,
+        style: GoogleFonts.raleway(
+          fontWeight: bold ? FontWeight.bold : FontWeight.w500,
+        ),
+      ),
+      trailing: Text(
+        trailing,
+        style: GoogleFonts.raleway(
+          fontWeight: bold ? FontWeight.bold : FontWeight.w500,
+        ),
+      ),
+    );
+  }
+}
+
+class BalanceAmount {
+  String? balanceAmountToPay;
+  String? balanceAmountToReceive;
+  String? amountToPay;
+  String? amountPaid;
+  String? amountToReceive;
+  String? amountReceived;
+
+  BalanceAmount({
+    this.balanceAmountToPay,
+    this.balanceAmountToReceive,
+    this.amountToPay,
+    this.amountPaid,
+    this.amountToReceive,
+    this.amountReceived,
+  });
 }
